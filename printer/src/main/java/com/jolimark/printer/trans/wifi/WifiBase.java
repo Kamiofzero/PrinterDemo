@@ -30,7 +30,7 @@ public class WifiBase implements TransBase {
     private String ip;
     private int port;
 
-    public void setAddress(String ip, int port) {
+    public void setIpAndPort(String ip, int port) {
         this.ip = ip;
         this.port = port;
     }
@@ -183,4 +183,11 @@ public class WifiBase implements TransBase {
     }
 
 
+    public String getIp() {
+        return ip;
+    }
+
+    public int getPort() {
+        return port;
+    }
 }

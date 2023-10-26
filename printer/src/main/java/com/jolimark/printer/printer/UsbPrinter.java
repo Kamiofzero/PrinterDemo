@@ -17,9 +17,14 @@ public class UsbPrinter extends BasePrinter {
         return new Comm(usbBase);
     }
 
+    @Override
+    public String getDeviceInfo() {
+        return "[vid:" + usbBase.getDevice().getDeviceId() + ", pid:" + usbBase.getDevice().getProductId() + "]";
+    }
+
     public UsbPrinter() {
         super();
-        transtype= TransType.USB;
+        transtype = TransType.USB;
     }
 
     @Override
@@ -35,4 +40,7 @@ public class UsbPrinter extends BasePrinter {
         usbBase.setUsbDevice(usbDevice);
     }
 
+    public UsbDevice getDevice() {
+        return usbBase.getDevice();
+    }
 }

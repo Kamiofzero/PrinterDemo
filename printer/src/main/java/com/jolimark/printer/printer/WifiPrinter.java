@@ -13,17 +13,31 @@ public class WifiPrinter extends BasePrinter {
         return new Comm(wifiBase);
     }
 
+    @Override
+    public String getDeviceInfo() {
+        return "[ip:" + wifiBase.getIp() + ", port:" + wifiBase.getPort() + "]";
+    }
+
     public WifiPrinter() {
         super();
         transtype = TransType.WIFI;
     }
+
 
     @Override
     protected int initPackageSize() {
         return 1024;
     }
 
-    public void setAddress(String ip, int port) {
-        wifiBase.setAddress(ip, port);
+    public void setIpAndPort(String ip, int port) {
+        wifiBase.setIpAndPort(ip, port);
+    }
+
+    public String getIp() {
+        return wifiBase.getIp();
+    }
+
+    public int getPort() {
+        return wifiBase.getPort();
     }
 }

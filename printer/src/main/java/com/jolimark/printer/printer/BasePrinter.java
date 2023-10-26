@@ -28,9 +28,7 @@ public abstract class BasePrinter {
 
     protected String deviceInfo;
 
-    public String getDeviceInfo() {
-        return deviceInfo;
-    }
+    public abstract String getDeviceInfo();
 
     private String name;
 

@@ -228,4 +228,8 @@ public class UsbBase implements TransBase {
     public void setSendTimeout(int sendTimeout) {
         this.sendTimeout = sendTimeout;
     }
+
+    public UsbDevice getDevice() {
+        return usbDevice;
+    }
 }

@@ -13,6 +13,11 @@ public class BluetoothPrinter extends BasePrinter {
         return new Comm(bluetoothBase);
     }
 
+    @Override
+    public String getDeviceInfo() {
+        return "[mac:" + bluetoothBase.getBtDevAddress() + "]";
+    }
+
     public BluetoothPrinter() {
         super();
         transtype = TransType.BLUETOOTH;
