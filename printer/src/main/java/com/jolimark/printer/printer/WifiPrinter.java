@@ -1,6 +1,7 @@
 package com.jolimark.printer.printer;
 
 import com.jolimark.printer.direction.Comm;
+import com.jolimark.printer.trans.TransType;
 import com.jolimark.printer.trans.wifi.WifiBase;
 
 public class WifiPrinter extends BasePrinter {
@@ -10,6 +11,11 @@ public class WifiPrinter extends BasePrinter {
     protected Comm getComm() {
         wifiBase = new WifiBase();
         return new Comm(wifiBase);
+    }
+
+    public WifiPrinter() {
+        super();
+        transtype = TransType.WIFI;
     }
 
     @Override

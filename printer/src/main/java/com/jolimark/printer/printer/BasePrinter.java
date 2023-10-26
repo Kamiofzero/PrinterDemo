@@ -11,6 +11,7 @@ import com.jolimark.printer.bean.PrinterInfo;
 import com.jolimark.printer.callback.Callback;
 import com.jolimark.printer.common.MsgCode;
 import com.jolimark.printer.direction.Comm;
+import com.jolimark.printer.trans.TransType;
 import com.jolimark.printer.util.ByteArrayUtil;
 import com.jolimark.printer.util.ImageTransformer;
 
@@ -18,7 +19,21 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public abstract class BasePrinter {
+
+    protected TransType transtype;
+
+    public TransType getTranstype() {
+        return transtype;
+    }
+
+    protected String deviceInfo;
+
+    public String getDeviceInfo() {
+        return deviceInfo;
+    }
+
     private String name;
+
 
     public void setName(String name) {
         this.name = name;

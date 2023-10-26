@@ -48,6 +48,10 @@ public class JmPrinter {
         return printerList;
     }
 
+    public static void removePrinter(BasePrinter printer) {
+        printerHashMap.remove(printer);
+    }
+
     public static void release() {
         printerHashMap.clear();
     }

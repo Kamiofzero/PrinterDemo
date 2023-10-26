@@ -1,6 +1,7 @@
 package com.jolimark.printer.printer;
 
 import com.jolimark.printer.direction.Comm;
+import com.jolimark.printer.trans.TransType;
 import com.jolimark.printer.trans.bluetooth.BluetoothBase;
 
 public class BluetoothPrinter extends BasePrinter {
@@ -10,6 +11,11 @@ public class BluetoothPrinter extends BasePrinter {
     protected Comm getComm() {
         bluetoothBase = new BluetoothBase();
         return new Comm(bluetoothBase);
+    }
+
+    public BluetoothPrinter() {
+        super();
+        transtype = TransType.BLUETOOTH;
     }
 
     @Override
@@ -22,7 +28,7 @@ public class BluetoothPrinter extends BasePrinter {
         bluetoothBase.setBtDevAddress(address);
     }
 
-    public String getDeviceAddress(){
+    public String getDeviceAddress() {
         return bluetoothBase.getBtDevAddress();
     }
 

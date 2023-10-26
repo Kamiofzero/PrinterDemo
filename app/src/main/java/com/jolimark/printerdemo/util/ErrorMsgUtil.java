@@ -2,9 +2,9 @@ package com.jolimark.printerdemo.util;
 
 import android.content.Context;
 
+import com.jolimark.printer.common.MsgCode;
 import com.jolimark.printerdemo.PrinterDemoApp;
 import com.jolimark.printerdemo.R;
-import com.jolimark.sdk.common.MsgCode;
 
 public class ErrorMsgUtil {
 

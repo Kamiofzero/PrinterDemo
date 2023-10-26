@@ -4,6 +4,7 @@ import android.content.Context;
 import android.hardware.usb.UsbDevice;
 
 import com.jolimark.printer.direction.Comm;
+import com.jolimark.printer.trans.TransType;
 import com.jolimark.printer.trans.usb.UsbBase;
 
 public class UsbPrinter extends BasePrinter {
@@ -14,6 +15,11 @@ public class UsbPrinter extends BasePrinter {
     protected Comm getComm() {
         usbBase = new UsbBase();
         return new Comm(usbBase);
+    }
+
+    public UsbPrinter() {
+        super();
+        transtype= TransType.USB;
     }
 
     @Override
