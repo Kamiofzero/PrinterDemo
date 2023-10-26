@@ -12,6 +12,10 @@ class DeviceAddActivity : BaseActivity<ActivityDeviceAddBinding>() {
 
     override fun onViewClick(v: View?) {
         when (v?.id) {
+            R.id.btn_back -> {
+                finish()
+            }
+
             R.id.btn_wifi -> {
                 launchActivityForResult(WifiDevicesActivity::class.java, REQUEST_BLUETOOTH)
 

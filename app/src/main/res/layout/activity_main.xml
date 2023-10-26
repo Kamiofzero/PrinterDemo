@@ -45,46 +45,24 @@
         android:textAlignment="textStart"
         android:textColor="@color/black"
         app:backgroundTint="@color/white"
-        app:rippleColor="@color/gray"
         app:icon="@mipmap/device"
         app:iconPadding="15dp"
-        app:iconTint="@color/gray" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_printInfo"
-        style="@style/TextButton"
-        android:layout_marginTop="10dp"
-        android:paddingLeft="15dp"
-        android:text="@string/printerInfo"
-        android:textAlignment="textStart"
-        android:textColor="@color/black"
-        app:backgroundTint="@color/white"
-        app:icon="@mipmap/info"
-        app:iconPadding="15dp"
-        app:iconTint="@color/gray" />
+        app:iconTint="@color/gray"
+        app:rippleColor="@color/gray" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_setting"
         style="@style/TextButton"
         android:layout_marginTop="5dp"
-        android:paddingLeft="15dp"
         android:text="@string/setting"
-        android:textAlignment="textStart"
-        android:textColor="@color/black"
-        app:backgroundTint="@color/white"
         app:icon="@mipmap/setting"
-        app:iconPadding="15dp"
         app:iconTint="@color/gray" />
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_about"
         style="@style/TextButton"
         android:layout_marginTop="5dp"
-        android:paddingLeft="15dp"
         android:text="@string/about"
-        android:textAlignment="textStart"
-        android:textColor="@color/black"
-        app:backgroundTint="@color/white"
         app:icon="@mipmap/about"
-        app:iconPadding="15dp"
         app:iconTint="@color/gray" />
 </LinearLayout>

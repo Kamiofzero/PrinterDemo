@@ -53,13 +53,8 @@
             android:id="@+id/btn_search"
             style="@style/TextButton"
             android:layout_marginTop="10dp"
-            android:paddingLeft="15dp"
             android:text="@string/search"
-            android:textAlignment="textStart"
-            android:textColor="@color/black"
-            app:backgroundTint="@color/white"
             app:icon="@mipmap/search"
-            app:iconPadding="15dp"
             app:iconTint="@color/gray" />
 
         <LinearLayout

@@ -20,7 +20,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             }
 
             R.id.btn_devices -> {
-                launchActivityForResult(DeviceAddActivity::class.java, REQUEST_DEVICES)
+                launchActivityForResult(DevicesActivity::class.java, REQUEST_DEVICES)
             }
         }
 

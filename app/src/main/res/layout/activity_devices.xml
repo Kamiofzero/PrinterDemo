@@ -27,7 +27,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
             android:layout_toRightOf="@id/btn_back"
-            android:text="@string/devices"
+            android:text="@string/device"
             android:textColor="@color/theme"
             android:textSize="24dp"
             android:textStyle="bold" />
@@ -39,14 +39,8 @@
         android:id="@+id/btn_addDevice"
         style="@style/TextButton"
         android:layout_marginTop="10dp"
-        android:paddingLeft="15dp"
         android:text="@string/addDevice"
-        android:textAlignment="textStart"
-        android:textColor="@color/black"
-        app:backgroundTint="@color/white"
-        app:icon="@mipmap/add"
-        app:iconPadding="15dp"
-        app:iconTint="@null" />
+        app:icon="@mipmap/add" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -79,6 +73,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="10dp"
+                android:onClick="onViewClick"
                 android:src="@mipmap/min" />
 
         </RelativeLayout>

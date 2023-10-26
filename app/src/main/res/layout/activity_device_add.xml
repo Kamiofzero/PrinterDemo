@@ -27,7 +27,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
             android:layout_toRightOf="@id/btn_back"
-            android:text="@string/device"
+            android:text="@string/addDevice"
             android:textColor="@color/theme"
             android:textSize="24dp"
             android:textStyle="bold" />
@@ -37,39 +37,24 @@
         android:id="@+id/btn_wifi"
         style="@style/TextButton"
         android:layout_marginTop="10dp"
-        android:paddingLeft="15dp"
         android:text="@string/printWifi"
-        android:textAlignment="textStart"
-        android:textColor="@color/black"
-        app:backgroundTint="@color/white"
         app:icon="@mipmap/wifi"
-        app:iconPadding="15dp"
         app:iconTint="@color/gray" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_bluetooth"
         style="@style/TextButton"
         android:layout_marginTop="5dp"
-        android:paddingLeft="15dp"
         android:text="@string/bluetooth"
-        android:textAlignment="textStart"
-        android:textColor="@color/black"
-        app:backgroundTint="@color/white"
         app:icon="@mipmap/bluetooth"
-        app:iconPadding="15dp"
         app:iconTint="@color/gray" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_usb"
         style="@style/TextButton"
         android:layout_marginTop="5dp"
-        android:paddingLeft="15dp"
         android:text="@string/usb"
-        android:textAlignment="textStart"
-        android:textColor="@color/black"
-        app:backgroundTint="@color/white"
         app:icon="@mipmap/usb"
-        app:iconPadding="15dp"
         app:iconTint="@color/gray" />
 
 </LinearLayout>

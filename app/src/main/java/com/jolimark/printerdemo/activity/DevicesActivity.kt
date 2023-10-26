@@ -26,6 +26,10 @@ class DevicesActivity : BaseActivity<ActivityDevicesBinding>() {
             }
 
             R.id.btn_deleteDevice -> {
+                if (JmPrinter.isDevicesEmpty()) {
+                    toast(getString(R.string.tip_devices_empty))
+                    return
+                }
                 mAdapter.deleteModeEnable(!mAdapter.deleteMode)
             }
 
@@ -54,7 +58,7 @@ class DevicesActivity : BaseActivity<ActivityDevicesBinding>() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == 1 && resultCode == RESULT_OK) {
+        if (requestCode == 1 && resultCode == RESULT_OK) {
             mAdapter.setList(JmPrinter.getPrinters())
         }
     }
@@ -86,7 +90,7 @@ class DevicesActivity : BaseActivity<ActivityDevicesBinding>() {
             viewType: Int
         ): DeviceHolder<ItmDeviceBinding> {
 
-            var vb = ItmDeviceBinding.inflate(LayoutInflater.from(context))
+            var vb = ItmDeviceBinding.inflate(LayoutInflater.from(context), parent, false)
             return DeviceHolder(vb.root, vb)
         }
 

@@ -64,7 +64,9 @@ public class BluetoothReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
+        LogUtil.i(TAG, "onReceive: " + action);
         switch (action) {
+
             //蓝牙开关状态
             case BluetoothAdapter.ACTION_STATE_CHANGED: {
                 if (!flag_bt_state)

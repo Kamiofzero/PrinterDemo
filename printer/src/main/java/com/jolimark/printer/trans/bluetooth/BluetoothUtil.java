@@ -39,6 +39,7 @@ public class BluetoothUtil {
                 return;
             }
         }
+        LogUtil.i(TAG,"registerBluetoothReceiver");
         bluetoothReceiver = new BluetoothReceiver();
         IntentFilter filter = new IntentFilter();
         filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
@@ -65,23 +66,23 @@ public class BluetoothUtil {
 
 
     public void setBluetoothStateListener(BluetoothStateListener bluetoothStateListener) {
-        if (bluetoothReceiver == null)
+        if (bluetoothReceiver!= null)
             bluetoothReceiver.setBluetoothStateListener(bluetoothStateListener);
     }
 
     public void setBTDeviceBondListener(BTDeviceBondListener btDeviceBondListener) {
-        if (bluetoothReceiver == null)
+        if (bluetoothReceiver != null)
             bluetoothReceiver.setBtDeviceBondListener(btDeviceBondListener);
     }
 
 
     public void setBTDeviceDiscoveryListener(BTDeviceDiscoveryListener btDeviceDiscoveryListener) {
-        if (bluetoothReceiver == null)
+        if (bluetoothReceiver != null)
             bluetoothReceiver.setBtDeviceDiscoveryListener(btDeviceDiscoveryListener);
     }
 
     public void setBTDeviceAclListener(BTDeviceAclListener btDeviceAclListener) {
-        if (bluetoothReceiver == null)
+        if (bluetoothReceiver != null)
             bluetoothReceiver.setBTDeviceAclListener(btDeviceAclListener);
     }
 

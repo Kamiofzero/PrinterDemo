@@ -24,6 +24,9 @@
             android:name=".activity.UsbDevicesActivity"
             android:exported="false" />
         <activity
+            android:name=".activity.DevicesActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.WifiDevicesActivity"
             android:exported="false" />
         <activity

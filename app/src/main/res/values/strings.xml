@@ -56,5 +56,6 @@
     <string name="devices">设备</string>
     <string name="devicesList">设备列表</string>
     <string name="addDevice">添加设备</string>
+    <string name="tip_devices_empty">还没有设备，请先添加</string>
 
 </resources>
