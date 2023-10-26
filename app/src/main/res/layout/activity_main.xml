@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activity.MainActivity">
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="70dp"
+        android:orientation="horizontal"
+        android:padding="10.0dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            android:drawableLeft="@mipmap/logo"
+            android:drawablePadding="15dp"
+            android:text="@string/app_name"
+            android:textColor="@color/theme"
+            android:textSize="24dp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_print"
+        style="@style/MaterialButton"
+        android:layout_marginTop="10dp"
+        android:text="@string/print"
+        android:textAlignment="textStart"
+        app:backgroundTint="@color/gray"
+        app:icon="@mipmap/forbid"
+        app:iconPadding="15dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_devices"
+        style="@style/MaterialButton"
+        android:text="@string/device"
+        android:textAlignment="textStart"
+        android:textColor="@color/black"
+        app:backgroundTint="@color/white"
+        app:rippleColor="@color/gray"
+        app:icon="@mipmap/device"
+        app:iconPadding="15dp"
+        app:iconTint="@color/gray" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_printInfo"
+        style="@style/TextButton"
+        android:layout_marginTop="10dp"
+        android:paddingLeft="15dp"
+        android:text="@string/printerInfo"
+        android:textAlignment="textStart"
+        android:textColor="@color/black"
+        app:backgroundTint="@color/white"
+        app:icon="@mipmap/info"
+        app:iconPadding="15dp"
+        app:iconTint="@color/gray" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_setting"
+        style="@style/TextButton"
+        android:layout_marginTop="5dp"
+        android:paddingLeft="15dp"
+        android:text="@string/setting"
+        android:textAlignment="textStart"
+        android:textColor="@color/black"
+        app:backgroundTint="@color/white"
+        app:icon="@mipmap/setting"
+        app:iconPadding="15dp"
+        app:iconTint="@color/gray" />
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_about"
+        style="@style/TextButton"
+        android:layout_marginTop="5dp"
+        android:paddingLeft="15dp"
+        android:text="@string/about"
+        android:textAlignment="textStart"
+        android:textColor="@color/black"
+        app:backgroundTint="@color/white"
+        app:icon="@mipmap/about"
+        app:iconPadding="15dp"
+        app:iconTint="@color/gray" />
+</LinearLayout>

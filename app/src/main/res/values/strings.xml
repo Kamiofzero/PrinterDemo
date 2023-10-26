@@ -1,0 +1,60 @@
+<resources>
+    <string name="app_name">PrinterDemo</string>
+    <string name="print">打印</string>
+    <string name="device">设备</string>
+    <string name="btDevices">蓝牙设备</string>
+    <string name="search">搜索</string>
+    <string name="enableBT">开启蓝牙</string>
+    <string name="pairDevices">已配对设备</string>
+    <string name="foundDevices">发现设备</string>
+    <string name="tip_bt_off">蓝牙已关闭</string>
+    <string name="tip_bt_on">蓝牙已开启</string>
+    <string name="bonding">正在配对</string>
+    <string name="bond_fail">配对失败</string>
+    <string name="bonded">配对完成</string>
+    <string name="printing">Printing</string>
+    <string name="print_error">Print error</string>
+    <string name="tip_set_device_first">Please set device before printing</string>
+
+    <!--错误信息-->
+    <string name="printer_not_connect">打印机未连接</string>
+    <string name="wifi_address_null">Wi-Fi通讯，ip地址为空</string>
+    <string name="wifi_connect_fail">Wi-Fi通讯，连接失败</string>
+    <string name="wifi_send_fail">Wi-Fi通讯，发送数据失败</string>
+    <string name="wifi_read_fail">Wi-Fi通讯，接收数据失败</string>
+    <string name="wifi_udp_socket_create_fail">Wi-Fi设备搜索，udp创建失败</string>
+    <string name="wifi_not_connect">Wi-Fi通讯，未建立连接</string>
+    <string name="bt_address_null">蓝牙设备地址为空</string>
+    <string name="bt_connect_fail">蓝牙设备连接失败</string>
+    <string name="bt_send_fail">蓝牙设备发送数据失败</string>
+    <string name="bt_receive">蓝牙设备接收数据失败</string>
+    <string name="bt_not_connect">蓝牙设备未连接</string>
+    <string name="usb_device_null">usb设备为空</string>
+    <string name="usb_device_connect_fail">usb设备连接失败</string>
+    <string name="usb_send_fail">usb设备发送数据失败</string>
+    <string name="usb_receive_fail">usb设备接收数据失败</string>
+    <string name="usb_not_connect">usb设备未连接</string>
+    <string name="printer_receive_wrong">接收打印机返回有误</string>
+    <string name="printer_verify">打印机校验不通过</string>
+    <string name="printer_receive_timeout">接收打印机返回超时</string>
+    <string name="PDF_CONVERT_FAIL">PDF打印，PDF转换失败</string>
+    <string name="IMG_CONVERT_FAIL">PDF打印，图形转换失败</string>
+    <string name="PDF_PATH_EMPTY">PDF打印，文件地址为空</string>
+    <string name="PRINTER_TYPE_NULL">PDF打印，打印机类型不确定或不支持，无法进行图形转换</string>
+    <string name="GET_PRINTER_TYPE_FAIL">获取打印机类型失败</string>
+    <string name="CLIENT_CODE_INVALID">打印机客户编码不符</string>
+    <string name="printerInfo">打印机信息</string>
+    <string name="setting">设置</string>
+    <string name="about">关于</string>
+    <string name="printText">Print text</string>
+    <string name="printImage">Print Image</string>
+    <string name="printPrn">Print Prn</string>
+    <string name="printFile">Print File</string>
+    <string name="printWifi">WiFi</string>
+    <string name="bluetooth">Bluetooth</string>
+    <string name="usb">Usb</string>
+    <string name="devices">设备</string>
+    <string name="devicesList">设备列表</string>
+    <string name="addDevice">添加设备</string>
+
+</resources>

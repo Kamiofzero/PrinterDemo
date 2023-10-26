@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activity.MainActivity">
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="70dp"
+        android:orientation="horizontal"
+        android:padding="10.0dp">
+
+        <ImageView
+            android:id="@+id/btn_back"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_centerVertical="true"
+            android:onClick="onViewClick"
+            android:src="@mipmap/back" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@id/btn_back"
+            android:text="@string/btDevices"
+            android:textColor="@color/theme"
+            android:textSize="24dp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_enable"
+        style="@style/MaterialButton"
+        android:layout_marginTop="10dp"
+        android:text="@string/enableBT"
+        android:textAlignment="textStart"
+        app:backgroundTint="@color/gray" />
+
+    <LinearLayout
+        android:id="@+id/ll_bt"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_search"
+            style="@style/TextButton"
+            android:layout_marginTop="10dp"
+            android:paddingLeft="15dp"
+            android:text="@string/search"
+            android:textAlignment="textStart"
+            android:textColor="@color/black"
+            app:backgroundTint="@color/white"
+            app:icon="@mipmap/search"
+            app:iconPadding="15dp"
+            app:iconTint="@color/gray" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="20dp"
+            android:layout_weight="0.8"
+            android:background="@drawable/bg_menu"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="@string/pairDevices"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+
+            <ListView
+                android:id="@+id/pair_devices"
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1"
+                android:background="@android:color/white"
+                android:scrollbars="none"
+                android:stackFromBottom="false" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_menu"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="@string/foundDevices"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
+
+                <ProgressBar
+                    android:id="@+id/pb"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical"
+                    android:indeterminateTint="@color/gray"
+                    android:indeterminateTintMode="src_atop" />
+            </LinearLayout>
+
+
+            <ListView
+                android:id="@+id/new_devices"
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="2"
+                android:background="@android:color/white"
+                android:scrollbars="none"
+                android:stackFromBottom="false" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

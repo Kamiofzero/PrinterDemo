@@ -1,0 +1,61 @@
+<resources>
+    <string name="app_name">PrinterDemo</string>
+    <string name="print">Print</string>
+    <string name="device">Devices</string>
+    <string name="btDevices">BluetoothDevices</string>
+    <string name="search">Search</string>
+    <string name="enableBT">Bluetooth On</string>
+    <string name="pairDevices">Pair Devices</string>
+    <string name="foundDevices">Found Devices</string>
+    <string name="tip_bt_off">Bluetooth off</string>
+    <string name="tip_bt_on">Bluetooth on</string>
+    <string name="bonding">Device bonding</string>
+    <string name="bond_fail">Device bond fail</string>
+    <string name="bonded">Device bonded</string>
+    <string name="printing">Printing</string>
+    <string name="print_error">Print error</string>
+    <string name="tip_set_device_first">Please set device before printing</string>
+
+
+    <!--错误信息-->
+    <string name="printer_not_connect">printer not connect</string>
+    <string name="wifi_address_null">ip address null</string>
+    <string name="wifi_connect_fail">Wi-Fi communication, connect fail</string>
+    <string name="wifi_send_fail">Wi-Fi communication, send data fail</string>
+    <string name="wifi_read_fail">Wi-Fi communication，receive data fail</string>
+    <string name="wifi_udp_socket_create_fail">Wi-Fi device search，udp create fail</string>
+    <string name="wifi_not_connect">Wi-Fi communication，not connect yet</string>
+    <string name="bt_address_null">bluetooth device address null</string>
+    <string name="bt_connect_fail">bluetooth device connect fail</string>
+    <string name="bt_send_fail">bluetooth device send data fail</string>
+    <string name="bt_receive">bluetooth device receive data fail</string>
+    <string name="bt_not_connect">bluetooth device not connect yet</string>
+    <string name="usb_device_null">usb device null</string>
+    <string name="usb_device_connect_fail">usb device connect fail</string>
+    <string name="usb_send_fail">usb device send data fail</string>
+    <string name="usb_receive_fail">>usb device receive data fail</string>
+    <string name="usb_not_connect">usb device not connect yet</string>
+    <string name="printer_receive_wrong">receive printer data wrong</string>
+    <string name="printer_verify">printer verify fail</string>
+    <string name="printer_receive_timeout">printer receive timeout</string>
+    <string name="PDF_CONVERT_FAIL">PDF printing，PDF convert fail</string>
+    <string name="IMG_CONVERT_FAIL">PDF printing，IMG convert fail</string>
+    <string name="PDF_PATH_EMPTY">PDF printing，PDF path null</string>
+    <string name="PRINTER_TYPE_NULL">PDF printing，cannot get printer type or printer type not support, fail to convert IMG</string>
+    <string name="GET_PRINTER_TYPE_FAIL">get printer type fail</string>
+    <string name="CLIENT_CODE_INVALID">printer client code invalid</string>
+    <string name="printerInfo">Printer Info</string>
+    <string name="setting">Setting</string>
+    <string name="about">About</string>
+    <string name="printText">Print Text</string>
+    <string name="printImage">Print Image</string>
+    <string name="printPrn">Print Prn</string>
+    <string name="printFile">Print File</string>
+    <string name="printWifi">WiFi</string>
+    <string name="bluetooth">Bluetooth</string>
+    <string name="usb">Usb</string>
+    <string name="devices">设备</string>
+    <string name="devicesList">设备列表</string>
+    <string name="addDevice">添加设备</string>
+
+</resources>
