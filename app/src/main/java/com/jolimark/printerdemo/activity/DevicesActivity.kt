@@ -54,6 +54,9 @@ class DevicesActivity : BaseActivity<ActivityDevicesBinding>() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == 1 && resultCode == RESULT_OK) {
+            mAdapter.setList(JmPrinter.getPrinters())
+        }
     }
 
     private fun removeDevice(basePrinter: BasePrinter) {
