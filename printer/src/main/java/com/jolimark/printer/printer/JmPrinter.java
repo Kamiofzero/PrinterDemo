@@ -47,7 +47,6 @@ public class JmPrinter {
         }
         return printerList;
     }
-
     public static void removePrinter(BasePrinter printer) {
         printerHashMap.remove(printer);
     }

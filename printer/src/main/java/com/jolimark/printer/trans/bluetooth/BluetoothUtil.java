@@ -144,14 +144,15 @@ public class BluetoothUtil {
         if (TextUtils.isEmpty(address))
             return false;
         BluetoothBase bluetoothBase = new BluetoothBase();
-        boolean ret = bluetoothBase.open(address);
+        bluetoothBase.setBtDevAddress(address);
+        boolean ret = bluetoothBase.connect();
         if (!ret) {
             BluetoothDevice device = getDevice(address);
             if (device != null && device.getBondState() == BluetoothDevice.BOND_BONDED) {
                 ret = true;
             }
         }
-        bluetoothBase.close();
+        bluetoothBase.disconnect();
         return ret;
     }
 

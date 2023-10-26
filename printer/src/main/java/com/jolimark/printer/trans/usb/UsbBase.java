@@ -118,15 +118,6 @@ public class UsbBase implements TransBase {
         return true;
     }
 
-    /**
-     * 打开usb连接
-     *
-     * @return
-     */
-    public boolean open(UsbManager usbManager, UsbDevice usbDevice) {
-
-    }
-
 
     @Override
     public boolean sendData(byte[] bytes) {
