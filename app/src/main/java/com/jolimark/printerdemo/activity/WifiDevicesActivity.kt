@@ -47,6 +47,11 @@ class WifiDevicesActivity : BaseActivity<ActivityWifiDevicesBinding>(), WifiUtil
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        wifiUtil.unregisterReceiver(context)
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK) {
