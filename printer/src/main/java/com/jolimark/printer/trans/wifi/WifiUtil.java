@@ -1,7 +1,10 @@
 package com.jolimark.printer.trans.wifi;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
@@ -14,9 +17,11 @@ import com.jolimark.printer.trans.wifi.search.DeviceInfo;
 import com.jolimark.printer.trans.wifi.search.SearchDeviceCallback;
 import com.jolimark.printer.trans.wifi.search.SearchDeviceThread;
 import com.jolimark.printer.trans.wifi.search.SearchDeviceThread1;
+
 @SuppressLint("MissingPermission")
 public class WifiUtil {
 
+    private final String TAG = getClass().getSimpleName();
 
     private SearchDeviceThread searchDeviceThread;
     private SearchDeviceThread1 searchDeviceThread1;
@@ -35,6 +40,59 @@ public class WifiUtil {
         mainHandler = new MainHandler();
     }
 
+    public void registerReceiver(Context context) {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+        context.registerReceiver(broadcastReceiver, intentFilter);
+    }
+
+    public void unregisterReceiver(Context context) {
+        context.unregisterReceiver(broadcastReceiver);
+    }
+
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case WifiManager.WIFI_STATE_CHANGED_ACTION: {
+                    int state = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, 0);
+                    switch (state) {
+                        case WifiManager.WIFI_STATE_DISABLED: {
+                            break;
+                        }
+                        case WifiManager.WIFI_STATE_ENABLED: {
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+                case WifiManager.NETWORK_STATE_CHANGED_ACTION: {
+                    NetworkInfo networkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+                    NetworkInfo.State state = networkInfo.getState();
+                    if (state == NetworkInfo.State.CONNECTED) {
+                        if (callback != null) callback.onConnectWifiAp(true);
+                    } else if (state == NetworkInfo.State.DISCONNECTED) {
+                        if (callback != null) callback.onConnectWifiAp(false);
+                    }
+                    break;
+                }
+            }
+
+        }
+    };
+
+    private Callback callback;
+
+    public void setCallback(Callback callback) {
+        this.callback = callback;
+    }
+
+    public interface Callback {
+        void onConnectWifiAp(boolean isConnect);
+    }
+
+
     public void searchPrinter(final SearchDeviceCallback callback) {
         synchronized (WifiUtil.class) {
             if (flag_searching) {
@@ -47,9 +105,9 @@ public class WifiUtil {
         flag_searchEnd = false;
         flag_searchEnd1 = false;
 
-        searchDeviceThread = new SearchDeviceThread(this.callback);
+        searchDeviceThread = new SearchDeviceThread(this.searchCallback);
         searchDeviceThread.start();
-        searchDeviceThread1 = new SearchDeviceThread1(this.callback1);
+        searchDeviceThread1 = new SearchDeviceThread1(this.searchCallback1);
         searchDeviceThread1.start();
     }
 
@@ -65,7 +123,7 @@ public class WifiUtil {
     }
 
 
-    private SearchDeviceThread.Callback callback = new SearchDeviceThread.Callback() {
+    private SearchDeviceThread.Callback searchCallback = new SearchDeviceThread.Callback() {
         @Override
         public void onDeviceFound(DeviceInfo info) {
             mainHandler.obtainMessage(HANDLER_DEVICE_FOUND, info).sendToTarget();
@@ -77,7 +135,7 @@ public class WifiUtil {
             checkSearchFinish();
         }
     };
-    private SearchDeviceThread1.Callback callback1 = new SearchDeviceThread1.Callback() {
+    private SearchDeviceThread1.Callback searchCallback1 = new SearchDeviceThread1.Callback() {
         @Override
         public void onDeviceFound(DeviceInfo info) {
             mainHandler.obtainMessage(HANDLER_DEVICE_FOUND, info).sendToTarget();
@@ -155,7 +213,7 @@ public class WifiUtil {
      */
     public NetworkType getNetworkType(Context context) {
         NetworkType networkType = NetworkType.NONE;
-       NetworkInfo activeNetworkInfo = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
+        NetworkInfo activeNetworkInfo = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
         if (activeNetworkInfo != null) {
             switch (activeNetworkInfo.getType()) {
                 case 1:

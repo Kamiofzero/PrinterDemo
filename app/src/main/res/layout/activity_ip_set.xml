@@ -32,25 +32,26 @@
             android:textSize="24dp"
             android:textStyle="bold" />
     </RelativeLayout>
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_connectAp"
-        style="@style/MaterialButton"
-        android:layout_marginTop="10dp"
-        android:text="@string/connectAp"
-        android:textAlignment="textStart"
-        app:backgroundTint="@color/gray" />
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_setIp"
-        style="@style/TextButton"
-        android:layout_marginTop="10dp"
-        android:text="@string/setIp"
-        app:iconTint="@color/gray" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/et_ip"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginHorizontal="20dp"
+        android:hint="@string/ip" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/et_port"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginHorizontal="20dp"
+        android:hint="@string/port" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_search"
-        style="@style/TextButton"
+        android:id="@+id/btn_confirm"
+        style="@style/MaterialButton2"
         android:layout_marginTop="5dp"
-        android:text="@string/search"
+        android:text="@string/confirm"
         app:iconTint="@color/gray" />
 
 

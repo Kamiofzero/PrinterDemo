@@ -1,5 +1,6 @@
 package com.jolimark.printerdemo.activity
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +16,7 @@ import com.jolimark.printer.trans.TransType
 import com.jolimark.printerdemo.R
 import com.jolimark.printerdemo.databinding.ActivityDevicesBinding
 import com.jolimark.printerdemo.databinding.ItmDeviceBinding
+import com.jolimark.printerdemo.util.DialogUtil
 
 class DevicesActivity : BaseActivity<ActivityDevicesBinding>() {
 
@@ -30,7 +32,10 @@ class DevicesActivity : BaseActivity<ActivityDevicesBinding>() {
                     toast(getString(R.string.tip_devices_empty))
                     return
                 }
-                mAdapter.deleteModeEnable(!mAdapter.deleteMode)
+                mAdapter.apply {
+                    vb.btnDeleteDevice.setImageResource(if (deleteMode) R.mipmap.min else R.mipmap.min2)
+                    deleteModeEnable(!mAdapter.deleteMode)
+                }
             }
 
             R.id.btn_back -> {
@@ -54,6 +59,7 @@ class DevicesActivity : BaseActivity<ActivityDevicesBinding>() {
     }
 
     override fun initData() {
+        mAdapter.setList(JmPrinter.getPrinters())
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -64,7 +70,16 @@ class DevicesActivity : BaseActivity<ActivityDevicesBinding>() {
     }
 
     private fun removeDevice(basePrinter: BasePrinter) {
-        JmPrinter.removePrinter(basePrinter)
+        DialogUtil.showDialog(
+            context,
+            getString(R.string.tip_removeDevice),
+            object : DialogUtil.Callback {
+                override fun onClick(dialog: DialogInterface) {
+                    JmPrinter.removePrinter(basePrinter)
+                }
+
+            }, null
+        )
     }
 
     inner class DeviceAdapter : RecyclerView.Adapter<DeviceHolder<ItmDeviceBinding>>() {
@@ -101,9 +116,10 @@ class DevicesActivity : BaseActivity<ActivityDevicesBinding>() {
         override fun onBindViewHolder(holder: DeviceHolder<ItmDeviceBinding>, position: Int) {
             var basePrinter = dataList[position]
             holder.vb.ivDelete.apply {
-                visibility = if (deleteMode) View.INVISIBLE else View.VISIBLE
+                visibility = if (deleteMode) View.VISIBLE else View.INVISIBLE
                 setOnClickListener {
                     removeDevice(basePrinter)
+                    notifyDataSetChanged()
                 }
             }
             holder.vb.root.setOnClickListener {

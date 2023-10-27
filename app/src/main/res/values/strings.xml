@@ -57,5 +57,13 @@
     <string name="devicesList">设备列表</string>
     <string name="addDevice">添加设备</string>
     <string name="tip_devices_empty">还没有设备，请先添加</string>
+    <string name="tip_removeDevice">确定删除设备</string>
+    <string name="confirm">确定</string>
+    <string name="cancel">取消</string>
+    <string name="wifiDevices">WiFi设备</string>
+    <string name="setIp">指定IP端口</string>
+    <string name="connectAp">连接热点</string>
+    <string name="ip">IP  例如：192.168.5.163</string>
+    <string name="port">端口  例如：9100</string>
 
 </resources>

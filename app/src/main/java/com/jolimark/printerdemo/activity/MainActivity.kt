@@ -36,6 +36,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     }
 
     override fun initData() {
+
     }
 
     override fun onDestroy() {
