@@ -6,6 +6,8 @@ import com.jolimark.printer.printer.WifiPrinter
 import com.jolimark.printer.trans.TransType
 import com.jolimark.printerdemo.R
 import com.jolimark.printerdemo.databinding.ActivityIpSetBinding
+import com.jolimark.printerdemo.db.PrinterBean
+import com.jolimark.printerdemo.db.PrinterTableDao
 
 class IpSetActivity : BaseActivity<ActivityIpSetBinding>() {
 
@@ -18,10 +20,12 @@ class IpSetActivity : BaseActivity<ActivityIpSetBinding>() {
             R.id.btn_confirm -> {
                 var ip = vb.etIp.text.toString()
                 var port = vb.etPort.text.toString()
-                (JmPrinter.createPrinter(
+                var printer = JmPrinter.createPrinter(
                     TransType.WIFI,
                     "jolimark[$ip:$port]"
-                ) as WifiPrinter).apply { setIpAndPort(ip, port.toInt()) }
+                ) as WifiPrinter
+                printer.setIpAndPort(ip, port.toInt())
+                PrinterTableDao.INSTANCE.insert(PrinterBean(printer))
                 setResult(RESULT_OK)
                 finish()
             }

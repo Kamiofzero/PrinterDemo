@@ -285,7 +285,7 @@ public class BluetoothBase implements TransBase {
         }
     }
 
-    public String getBtDevAddress() {
+    public String getMac() {
         return btDevAddress;
     }
 }

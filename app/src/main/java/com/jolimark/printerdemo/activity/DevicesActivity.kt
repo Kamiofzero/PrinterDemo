@@ -15,7 +15,7 @@ import com.jolimark.printer.printer.JmPrinter
 import com.jolimark.printer.trans.TransType
 import com.jolimark.printerdemo.R
 import com.jolimark.printerdemo.databinding.ActivityDevicesBinding
-import com.jolimark.printerdemo.databinding.ItmDeviceBinding
+import com.jolimark.printerdemo.databinding.ItemDeviceBinding
 import com.jolimark.printerdemo.util.DialogUtil
 
 class DevicesActivity : BaseActivity<ActivityDevicesBinding>() {
@@ -48,11 +48,11 @@ class DevicesActivity : BaseActivity<ActivityDevicesBinding>() {
         vb.rvDevices.apply {
             layoutManager = LinearLayoutManager(context)
             itemAnimator = DefaultItemAnimator()
-            addItemDecoration(
-                DividerItemDecoration(
-                    context, LinearLayoutManager.VERTICAL
-                )
-            )
+//            addItemDecoration(
+//                DividerItemDecoration(
+//                    context, LinearLayoutManager.VERTICAL
+//                )
+//            )
             mAdapter = DeviceAdapter()
             adapter = mAdapter
         }
@@ -82,7 +82,7 @@ class DevicesActivity : BaseActivity<ActivityDevicesBinding>() {
         )
     }
 
-    inner class DeviceAdapter : RecyclerView.Adapter<DeviceHolder<ItmDeviceBinding>>() {
+    inner class DeviceAdapter : RecyclerView.Adapter<DeviceHolder<ItemDeviceBinding>>() {
 
         private var dataList = mutableListOf<BasePrinter>()
 
@@ -103,9 +103,9 @@ class DevicesActivity : BaseActivity<ActivityDevicesBinding>() {
         override fun onCreateViewHolder(
             parent: ViewGroup,
             viewType: Int
-        ): DeviceHolder<ItmDeviceBinding> {
+        ): DeviceHolder<ItemDeviceBinding> {
 
-            var vb = ItmDeviceBinding.inflate(LayoutInflater.from(context), parent, false)
+            var vb = ItemDeviceBinding.inflate(LayoutInflater.from(context), parent, false)
             return DeviceHolder(vb.root, vb)
         }
 
@@ -113,7 +113,7 @@ class DevicesActivity : BaseActivity<ActivityDevicesBinding>() {
             return dataList.size
         }
 
-        override fun onBindViewHolder(holder: DeviceHolder<ItmDeviceBinding>, position: Int) {
+        override fun onBindViewHolder(holder: DeviceHolder<ItemDeviceBinding>, position: Int) {
             var basePrinter = dataList[position]
             holder.vb.ivDelete.apply {
                 visibility = if (deleteMode) View.VISIBLE else View.INVISIBLE

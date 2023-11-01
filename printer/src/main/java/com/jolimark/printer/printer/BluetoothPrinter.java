@@ -15,7 +15,7 @@ public class BluetoothPrinter extends BasePrinter {
 
     @Override
     public String getDeviceInfo() {
-        return "[mac:" + bluetoothBase.getBtDevAddress() + "]";
+        return "[mac:" + bluetoothBase.getMac() + "]";
     }
 
     public BluetoothPrinter() {
@@ -29,12 +29,12 @@ public class BluetoothPrinter extends BasePrinter {
     }
 
 
-    public void setDeviceAddress(String address) {
+    public void setMac(String address) {
         bluetoothBase.setBtDevAddress(address);
     }
 
-    public String getDeviceAddress() {
-        return bluetoothBase.getBtDevAddress();
+    public String getMac() {
+        return bluetoothBase.getMac();
     }
 
 }

@@ -65,5 +65,8 @@
     <string name="connectAp">连接热点</string>
     <string name="ip">IP  例如：192.168.5.163</string>
     <string name="port">端口  例如：9100</string>
+    <string name="usbevices">USB设备</string>
+    <string name="tip_usbDenied">usb设备权限被拒绝</string>
+    <string name="tip_selectDevice">选择打印设备</string>
 
 </resources>

@@ -23,7 +23,6 @@ public final class MsgCode {
     public static final int ER_RECEIVE_BUFFER_NULL = 7;
 
 
-
     //打印机未连接
     public static final int ER_PRINTER_NOT_CONNECT = 10;
 
@@ -48,13 +47,16 @@ public final class MsgCode {
     public static final int ER_BT_RECEIVE = 204;
 
     //usb设备空
-    public static final int ER_USB_DEVICE_null = 301;
+    public static final int ER_USB_DEVICE_null = 300;
+    //usb设备未找到
+    public static final int ER_USB_DEVICE_NOT_FOUND = 301;
     //usb连接失败
     public static final int ER_USB_DEVICE_CONNECT_FAIL = 302;
     //usb发送失败
     public static final int ER_USB_SEND_FAIL = 303;
     //usb接收失败
     public static final int ER_USB_RECEIVE_FAIL = 304;
+    public static final int ER_USB_PERMISSION_DENIED = 305;
 
 
     //打印机未切换至双向通讯模式
@@ -83,8 +85,6 @@ public final class MsgCode {
     public static final int ER_BIDIRECTIONAL_SN_NOT_MATCH = 509;
     //打印机回复包，CRC校验不通过
     public static final int ER_BIDIRECTIONAL_CRC_NOT_MATCH = 510;
-
-
 
 
     //打印机开盖
@@ -120,7 +120,6 @@ public final class MsgCode {
     }
 
 
-
     public static String getLastErrorMsg() {
         String msg = "";
         switch (errCode) {
@@ -147,7 +146,8 @@ public final class MsgCode {
             case ER_USB_DEVICE_null: {
                 msg = "未找到打印机";
                 break;
-            } case ER_USB_DEVICE_CONNECT_FAIL: {
+            }
+            case ER_USB_DEVICE_CONNECT_FAIL: {
                 msg = "连接打印机失败";
                 break;
             }
@@ -210,7 +210,6 @@ public final class MsgCode {
         }
         return msg;
     }
-
 
 
 }

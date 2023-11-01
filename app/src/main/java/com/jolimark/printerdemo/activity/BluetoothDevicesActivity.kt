@@ -14,6 +14,8 @@ import com.jolimark.printer.trans.bluetooth.listener.BluetoothStateListener
 import com.jolimark.printer.util.LogUtil
 import com.jolimark.printerdemo.R
 import com.jolimark.printerdemo.databinding.ActivityBluetoothDevicesBinding
+import com.jolimark.printerdemo.db.PrinterBean
+import com.jolimark.printerdemo.db.PrinterTableDao
 import com.jolimark.printerdemo.util.PermissionUtil
 import com.jolimark.printerdemo.util.PermissionUtil.PERMISSION_ACCESS_COARSE_LOCATION
 import com.jolimark.printerdemo.util.PermissionUtil.PERMISSION_ACCESS_FINE_LOCATION
@@ -81,9 +83,10 @@ class BluetoothDevicesActivity : BaseActivity<ActivityBluetoothDevicesBinding>()
             val device = pairDevices[i]
             var printer = JmPrinter.createPrinter(
                 TransType.BLUETOOTH,
-                "jolimark[${device.address}]"
+                "Jolimark[${device.address}]"
             ) as BluetoothPrinter
-            printer.deviceAddress = device.address
+            printer.mac = device.address
+            PrinterTableDao.INSTANCE.insert(PrinterBean(printer))
             setResult(RESULT_OK, intent)
             finish()
         }
@@ -184,10 +187,11 @@ class BluetoothDevicesActivity : BaseActivity<ActivityBluetoothDevicesBinding>()
         hideProgress()
         var printer = JmPrinter.createPrinter(
             TransType.BLUETOOTH,
-            "jolimark[${device?.address}]"
+            "Jolimark[${device?.address}]"
         ) as BluetoothPrinter
-        printer.deviceAddress = device?.address
-        LogUtil.i(TAG, "select device [${printer.deviceAddress}]")
+        printer.mac = device?.address
+        PrinterTableDao.INSTANCE.insert(PrinterBean(printer))
+        LogUtil.i(TAG, "select device [${printer.mac}]")
         setResult(RESULT_OK, intent)
         finish()
     }

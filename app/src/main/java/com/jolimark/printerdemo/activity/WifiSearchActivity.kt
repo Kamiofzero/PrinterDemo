@@ -10,6 +10,8 @@ import com.jolimark.printer.trans.wifi.search.DeviceInfo
 import com.jolimark.printer.trans.wifi.search.SearchDeviceCallback
 import com.jolimark.printerdemo.R
 import com.jolimark.printerdemo.databinding.ActivityWifiSearchBinding
+import com.jolimark.printerdemo.db.PrinterBean
+import com.jolimark.printerdemo.db.PrinterTableDao
 
 class WifiSearchActivity : BaseActivity<ActivityWifiSearchBinding>() {
 
@@ -29,7 +31,14 @@ class WifiSearchActivity : BaseActivity<ActivityWifiSearchBinding>() {
                 wifiUtil.stopSearchPrinter()
                 wifiUtil.searchPrinter(object : SearchDeviceCallback {
                     override fun deviceFound(deviceInfo: DeviceInfo?) {
-
+                        foundDevices.add(deviceInfo!!)
+                        foundDevicesArrayAdapters!!.add(
+                            """
+                    ${deviceInfo.ip}
+                    ${deviceInfo.port}
+                    """.trimIndent()
+                        ) // 添加找到的蓝牙设备
+                        foundDevicesArrayAdapters!!.notifyDataSetChanged()
                     }
 
                     override fun searchFinish() {
@@ -48,10 +57,12 @@ class WifiSearchActivity : BaseActivity<ActivityWifiSearchBinding>() {
             var info = foundDevices[position]
             var ip = info.ip
             var port = info.port
-            (JmPrinter.createPrinter(
+            var printer = JmPrinter.createPrinter(
                 TransType.WIFI,
-                "jolimark[$ip:$port]"
-            ) as WifiPrinter).apply { setIpAndPort(ip, port.toInt()) }
+                "Jolimark[$ip:$port]"
+            ) as WifiPrinter
+            printer.setIpAndPort(ip, port.toInt())
+            PrinterTableDao.INSTANCE.insert(PrinterBean(printer))
             setResult(RESULT_OK)
             finish()
         }

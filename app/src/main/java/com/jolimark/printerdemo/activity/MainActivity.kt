@@ -5,6 +5,7 @@ import android.view.View
 import com.jolimark.printer.printer.JmPrinter
 import com.jolimark.printerdemo.R
 import com.jolimark.printerdemo.databinding.ActivityMainBinding
+import com.jolimark.printerdemo.db.PrinterTableDao
 
 class MainActivity : BaseActivity<ActivityMainBinding>() {
 
@@ -36,7 +37,14 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     }
 
     override fun initData() {
+        loadPrinters()
+    }
 
+    private fun loadPrinters() {
+        var list = PrinterTableDao.INSTANCE.queryAll()
+        list.forEach {
+            JmPrinter.addPrinter(it.toPrinter())
+        }
     }
 
     override fun onDestroy() {
@@ -47,28 +55,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-//            REQUEST_DEVICES -> {
-//                if (resultCode == RESULT_OK) {
-//                    data?.getStringExtra("type")?.also { s ->
-//                        var str = when (s) {
-//                            "wifi" ->
-//                                "${getString(R.string.device)}\n[${WifiPrinter.getInstance().address}]"
-//
-//                            "bluetooth" ->
-//                                "${getString(R.string.device)}\n[${BluetoothPrinter.getInstance().address}]"
-//
-//
-//                            "usb" ->
-//                                "${getString(R.string.device)}\n[${UsbPrinter.getInstance().usbDevice?.let { "${it.vendorId},${it.productId}" }}]"
-//
-//                            else -> ""
-//                        }
-//                        vb.btnDevices.text = str
-//                    }
-//                    vb.btnPrint.icon = getDrawable(R.mipmap.allow)
-//
-//                }
-//            }
+            REQUEST_DEVICES -> {
+                if (!JmPrinter.isDevicesEmpty())
+                    vb.btnPrint.icon = getDrawable(R.mipmap.allow)
+
+            }
         }
     }
 

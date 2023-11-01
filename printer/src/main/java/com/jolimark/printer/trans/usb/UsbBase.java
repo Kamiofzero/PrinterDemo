@@ -1,6 +1,10 @@
 package com.jolimark.printer.trans.usb;
 
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
@@ -11,6 +15,9 @@ import android.hardware.usb.UsbManager;
 import com.jolimark.printer.common.MsgCode;
 import com.jolimark.printer.trans.TransBase;
 import com.jolimark.printer.util.LogUtil;
+
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Created by ljbin on 2018/1/31.
@@ -33,14 +40,66 @@ public class UsbBase implements TransBase {
     }
 
     private UsbDevice usbDevice;
+    private int vid = -1, pid = -1;
+
+    private final String ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION";
+
 
     public void setUsbDevice(UsbDevice usbDevice) {
         this.usbDevice = usbDevice;
     }
 
+
+    private UsbDevice findDevice(UsbManager usbManager, int vid, int pid) {
+        HashMap<String, UsbDevice> deviceList = usbManager.getDeviceList();
+        LogUtil.i(TAG, "usb devices list:");
+        Iterator<UsbDevice> deviceIterator = deviceList.values().iterator();
+        while (deviceIterator.hasNext()) {
+            UsbDevice device = deviceIterator.next();
+            LogUtil.i(TAG, "device  [vid " + device.getVendorId() + "]");
+            if (device.getVendorId() == vid &&
+                    device.getProductId() == pid) {
+                return device;
+            }
+        }
+        return null;
+    }
+
+    boolean isPermissionResult;
+
+    private boolean checkAndRequestPermission(UsbManager usbManager, UsbDevice usbDevice) {
+        if (!usbManager.hasPermission(usbDevice)) {
+            LogUtil.i(TAG, "has no permission of this device，request permission.");
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), 0);
+            usbManager.requestPermission(usbDevice, pendingIntent);
+            IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
+            context.registerReceiver(mUsbReceiver, filter);
+            isPermissionResult = false;
+            while (true) {
+                if (isPermissionResult) {
+                    if (usbManager.hasPermission(usbDevice)) return true;
+                    else return false;
+                }
+            }
+        }
+        return true;
+    }
+
+
+    private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            context.unregisterReceiver(this);
+            String action = intent.getAction();
+            if (ACTION_USB_PERMISSION.equals(action)) {
+                isPermissionResult = true;
+            }
+        }
+    };
+
+
     @Override
     public boolean connect() {
-        if (usbDevice == null) {
+        if (usbDevice == null && vid == -1 && pid == -1) {
             LogUtil.i(TAG, "usbDevice not set.");
             MsgCode.setLastErrorCode(MsgCode.ER_USB_DEVICE_null);
             return false;
@@ -51,8 +110,22 @@ public class UsbBase implements TransBase {
         if (mConnection != null) {
             disconnect();
         }
-        LogUtil.i(TAG, "device: [vid: " + usbDevice.getVendorId() + " , pid: " + usbDevice.getProductId() + " , did: " + usbDevice.getDeviceId() + "]");
+        UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
+        if (usbDevice == null && vid > -1 && pid > -1) {
+            usbDevice = findDevice(usbManager, vid, pid);
+            if (usbDevice == null) {
+                LogUtil.i(TAG, "usbDevice not found.");
+                MsgCode.setLastErrorCode(MsgCode.ER_USB_DEVICE_NOT_FOUND);
+                return false;
+            }
+        }
+        if (!checkAndRequestPermission(usbManager, usbDevice)) {
+            LogUtil.i(TAG, "usbDevice permission denied.");
+            MsgCode.setLastErrorCode(MsgCode.ER_USB_PERMISSION_DENIED);
+            return false;
+        }
 
+        LogUtil.i(TAG, "device: [vid: " + usbDevice.getVendorId() + " , pid: " + usbDevice.getProductId() + " , did: " + usbDevice.getDeviceId() + "]");
         LogUtil.i(TAG, "get usb printer interface.");
         LogUtil.i(TAG, "interface count: " + usbDevice.getInterfaceCount());
         //InterfaceClass代表usb设备类型，7为打印机
@@ -71,7 +144,6 @@ public class UsbBase implements TransBase {
             return false;
         }
         LogUtil.i(TAG, "open device connection.");
-        UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
         mConnection = usbManager.openDevice(usbDevice);
         if (mConnection == null) {
             LogUtil.i(TAG, "open device connection fail.");
@@ -231,5 +303,18 @@ public class UsbBase implements TransBase {
 
     public UsbDevice getDevice() {
         return usbDevice;
+    }
+
+    public void setId(int vid, int pid) {
+        this.vid = vid;
+        this.pid = pid;
+    }
+
+    public int getVid() {
+        return vid;
+    }
+
+    public int getPid() {
+        return pid;
     }
 }

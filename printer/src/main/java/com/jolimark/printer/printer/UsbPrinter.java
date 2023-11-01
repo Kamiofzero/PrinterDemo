@@ -40,6 +40,19 @@ public class UsbPrinter extends BasePrinter {
         usbBase.setUsbDevice(usbDevice);
     }
 
+    public void setId(int vid, int pid) {
+        usbBase.setId(vid, pid);
+    }
+
+    public int getVid() {
+        return usbBase.getVid();
+
+    }
+
+    public int getPid() {
+        return usbBase.getPid();
+    }
+
     public UsbDevice getDevice() {
         return usbBase.getDevice();
     }
