@@ -3,8 +3,6 @@ package com.jolimark.printerdemo.activity
 import android.view.View
 import android.widget.ArrayAdapter
 import com.jolimark.printer.printer.JmPrinter
-import com.jolimark.printer.printer.WifiPrinter
-import com.jolimark.printer.trans.TransType
 import com.jolimark.printer.trans.wifi.WifiUtil
 import com.jolimark.printer.trans.wifi.search.DeviceInfo
 import com.jolimark.printer.trans.wifi.search.SearchDeviceCallback
@@ -57,11 +55,13 @@ class WifiSearchActivity : BaseActivity<ActivityWifiSearchBinding>() {
             var info = foundDevices[position]
             var ip = info.ip
             var port = info.port
-            var printer = JmPrinter.createPrinter(
-                TransType.WIFI,
-                "Jolimark[$ip:$port]"
-            ) as WifiPrinter
-            printer.setIpAndPort(ip, port.toInt())
+
+            var printer = JmPrinter.getWifiPrinter(ip, port.toInt())
+//            var printer = JmPrinter.createPrinter(
+//                TransType.WIFI,
+//                "Jolimark[$ip:$port]"
+//            ) as WifiPrinter
+//            printer.setIpAndPort(ip, port.toInt())
             PrinterTableDao.INSTANCE.insert(PrinterBean(printer))
             setResult(RESULT_OK)
             finish()

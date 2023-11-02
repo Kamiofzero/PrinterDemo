@@ -145,7 +145,7 @@ public class BluetoothUtil {
         if (TextUtils.isEmpty(address))
             return false;
         BluetoothBase bluetoothBase = new BluetoothBase();
-        bluetoothBase.setBtDevAddress(address);
+        bluetoothBase.setMac(address);
         boolean ret = bluetoothBase.connect();
         if (!ret) {
             BluetoothDevice device = getDevice(address);

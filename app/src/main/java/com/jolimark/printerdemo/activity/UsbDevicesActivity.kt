@@ -5,8 +5,6 @@ import android.view.View
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.ArrayAdapter
 import com.jolimark.printer.printer.JmPrinter
-import com.jolimark.printer.printer.UsbPrinter
-import com.jolimark.printer.trans.TransType
 import com.jolimark.printer.trans.usb.UsbUtil
 import com.jolimark.printer.trans.usb.UsbUtil.UsbPermissionRequestListener
 import com.jolimark.printerdemo.R
@@ -48,11 +46,19 @@ class UsbDevicesActivity : BaseActivity<ActivityUsbDevicesBinding>() {
                         usbDevice,
                         object : UsbPermissionRequestListener {
                             override fun onRequestGranted() {
-                                var printer = JmPrinter.createPrinter(
-                                    TransType.USB,
-                                    "Jolimark[${usbDevice.vendorId},${usbDevice.productId}]"
-                                ) as UsbPrinter
-                                printer.device = usbDevice
+                                var printer = JmPrinter.getUsbPrinter(
+                                    context,
+                                    usbDevice.vendorId,
+                                    usbDevice.productId
+                                )
+//
+//
+//                                var printer = JmPrinter.createPrinter(
+//                                    TransType.USB,
+//                                    "Jolimark[${usbDevice.vendorId},${usbDevice.productId}]"
+//                                ) as UsbPrinter
+//                                printer.device = usbDevice
+//                                printer.initContext(PrinterDemoApp.context)
                                 PrinterTableDao.INSTANCE.insert(PrinterBean(printer))
                                 setResult(RESULT_OK)
                                 finish()

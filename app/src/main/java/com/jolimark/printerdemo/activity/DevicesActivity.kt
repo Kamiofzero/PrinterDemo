@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
@@ -16,6 +15,8 @@ import com.jolimark.printer.trans.TransType
 import com.jolimark.printerdemo.R
 import com.jolimark.printerdemo.databinding.ActivityDevicesBinding
 import com.jolimark.printerdemo.databinding.ItemDeviceBinding
+import com.jolimark.printerdemo.db.PrinterBean
+import com.jolimark.printerdemo.db.PrinterTableDao
 import com.jolimark.printerdemo.util.DialogUtil
 
 class DevicesActivity : BaseActivity<ActivityDevicesBinding>() {
@@ -76,6 +77,7 @@ class DevicesActivity : BaseActivity<ActivityDevicesBinding>() {
             object : DialogUtil.Callback {
                 override fun onClick(dialog: DialogInterface) {
                     JmPrinter.removePrinter(basePrinter)
+                    PrinterTableDao.INSTANCE.delete(PrinterBean(basePrinter))
                 }
 
             }, null

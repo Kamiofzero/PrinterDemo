@@ -12,7 +12,7 @@ class PrinterTableDao(context: Context) : TableDao<PrinterBean>(PrinterDBHelper(
 
     override fun getContentValues(t: PrinterBean): ContentValues {
         return ContentValues().apply {
-            put("id", t.id)
+            put("_uuid", t._uuid)
             put("type", t.type)
             put("info", t.info)
         }
@@ -21,7 +21,7 @@ class PrinterTableDao(context: Context) : TableDao<PrinterBean>(PrinterDBHelper(
     @SuppressLint("Range")
     override fun parseCursorToBean(cursor: Cursor): PrinterBean {
         return PrinterBean().apply {
-            this.id = cursor.getLong(cursor.getColumnIndex("id"))
+            this._uuid = cursor.getString(cursor.getColumnIndex("_uuid"))
             this.type = cursor.getString(cursor.getColumnIndex("type"))
             this.info = cursor.getString(cursor.getColumnIndex("info"))
         }

@@ -14,11 +14,6 @@ public abstract class BaseDBHelper extends SQLiteOpenHelper {
         super(context, name, null, version);
     }
 
-
-//    protected abstract String getTableName();
-//
-//    protected abstract List<DBColumn> getTableColumns();
-
     protected abstract List<DBTable> getTables();
 
     @Override
@@ -33,6 +28,8 @@ public abstract class BaseDBHelper extends SQLiteOpenHelper {
         StringBuilder sb = new StringBuilder();
         sb.append("CREATE TABLE " + table.tableName + "(");
         sb.append(" _id INTEGER PRIMARY KEY AUTOINCREMENT");
+        sb.append(",");
+        sb.append("_uuid TEXT");
         List<DBColumn> list = table.columnList;
         for (DBColumn dbColumn : list) {
             sb.append(",");

@@ -4,9 +4,7 @@ import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
 import android.view.View
 import android.widget.ArrayAdapter
-import com.jolimark.printer.printer.BluetoothPrinter
 import com.jolimark.printer.printer.JmPrinter
-import com.jolimark.printer.trans.TransType
 import com.jolimark.printer.trans.bluetooth.BluetoothUtil
 import com.jolimark.printer.trans.bluetooth.listener.BTDeviceBondListener
 import com.jolimark.printer.trans.bluetooth.listener.BTDeviceDiscoveryListener
@@ -21,8 +19,9 @@ import com.jolimark.printerdemo.util.PermissionUtil.PERMISSION_ACCESS_COARSE_LOC
 import com.jolimark.printerdemo.util.PermissionUtil.PERMISSION_ACCESS_FINE_LOCATION
 import com.jolimark.printerdemo.util.PermissionUtil.PERMISSION_BLUETOOTH_CONNECT
 import com.jolimark.printerdemo.util.PermissionUtil.PERMISSION_BLUETOOTH_SCAN
-
 import kotlin.concurrent.thread
+
+@SuppressLint("MissingPermission")
 
 class BluetoothDevicesActivity : BaseActivity<ActivityBluetoothDevicesBinding>(),
     BluetoothStateListener, BTDeviceDiscoveryListener, BTDeviceBondListener {
@@ -81,11 +80,12 @@ class BluetoothDevicesActivity : BaseActivity<ActivityBluetoothDevicesBinding>()
         vb.pairDevices.adapter = pairDevicesArrayAdapters
         vb.pairDevices.setOnItemClickListener { adapterView, view, i, l ->
             val device = pairDevices[i]
-            var printer = JmPrinter.createPrinter(
-                TransType.BLUETOOTH,
-                "Jolimark[${device.address}]"
-            ) as BluetoothPrinter
-            printer.mac = device.address
+//            var printer = JmPrinter.createPrinter(
+//                TransType.BLUETOOTH,
+//                "Jolimark[${device.address}]"
+//            ) as BluetoothPrinter
+//            printer.mac = device.address
+            var printer = JmPrinter.getBluetoothPrinter(device.address)
             PrinterTableDao.INSTANCE.insert(PrinterBean(printer))
             setResult(RESULT_OK, intent)
             finish()
@@ -158,7 +158,6 @@ class BluetoothDevicesActivity : BaseActivity<ActivityBluetoothDevicesBinding>()
         vb.pb.visibility = View.VISIBLE
     }
 
-    @SuppressLint("MissingPermission")
     override fun onDeviceFound(device: BluetoothDevice?) {
         if (device != null && !newDevices.contains(device) && !pairDevices.contains(device) && device.name != null) {
             newDevices.add(device)
@@ -185,11 +184,12 @@ class BluetoothDevicesActivity : BaseActivity<ActivityBluetoothDevicesBinding>()
         updateBondDevices()
         toast(getString(R.string.bonded))
         hideProgress()
-        var printer = JmPrinter.createPrinter(
-            TransType.BLUETOOTH,
-            "Jolimark[${device?.address}]"
-        ) as BluetoothPrinter
-        printer.mac = device?.address
+//        var printer = JmPrinter.createPrinter(
+//            TransType.BLUETOOTH,
+//            "Jolimark[${device?.address}]"
+//        ) as BluetoothPrinter
+//        printer.mac = device?.address
+        var printer = JmPrinter.getBluetoothPrinter(device?.address)
         PrinterTableDao.INSTANCE.insert(PrinterBean(printer))
         LogUtil.i(TAG, "select device [${printer.mac}]")
         setResult(RESULT_OK, intent)

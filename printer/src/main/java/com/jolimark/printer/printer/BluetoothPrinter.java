@@ -7,6 +7,7 @@ import com.jolimark.printer.trans.bluetooth.BluetoothBase;
 public class BluetoothPrinter extends BasePrinter {
     private BluetoothBase bluetoothBase;
 
+
     @Override
     protected Comm getComm() {
         bluetoothBase = new BluetoothBase();
@@ -18,9 +19,12 @@ public class BluetoothPrinter extends BasePrinter {
         return "[mac:" + bluetoothBase.getMac() + "]";
     }
 
-    public BluetoothPrinter() {
+
+    public BluetoothPrinter(String mac) {
         super();
         transtype = TransType.BLUETOOTH;
+        bluetoothBase.setMac(mac);
+        setName("bluetooth/" + mac);
     }
 
     @Override
@@ -29,9 +33,12 @@ public class BluetoothPrinter extends BasePrinter {
     }
 
 
-    public void setMac(String address) {
-        bluetoothBase.setBtDevAddress(address);
-    }
+//    public void setMac(String address) {
+//        bluetoothBase.setMac(address);
+//        if (getName() == null || getName().isEmpty()) {
+//            setName("bluetooth[" + address + "]");
+//        }
+//    }
 
     public String getMac() {
         return bluetoothBase.getMac();

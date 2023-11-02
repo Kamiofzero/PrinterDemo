@@ -18,9 +18,11 @@ public class WifiPrinter extends BasePrinter {
         return "[ip:" + wifiBase.getIp() + ", port:" + wifiBase.getPort() + "]";
     }
 
-    public WifiPrinter() {
+    public WifiPrinter(String ip, int port) {
         super();
         transtype = TransType.WIFI;
+        wifiBase.setIpAndPort(ip, port);
+        setName("wifi/" + ip + "/" + port);
     }
 
 
@@ -29,9 +31,12 @@ public class WifiPrinter extends BasePrinter {
         return 1024;
     }
 
-    public void setIpAndPort(String ip, int port) {
-        wifiBase.setIpAndPort(ip, port);
-    }
+//    public void setIpAndPort(String ip, int port) {
+//        wifiBase.setIpAndPort(ip, port);
+//        if (getName() == null || getName().isEmpty()) {
+//            setName("wifi[ip:" + ip + ", port:" + port + "]");
+//        }
+//    }
 
     public String getIp() {
         return wifiBase.getIp();

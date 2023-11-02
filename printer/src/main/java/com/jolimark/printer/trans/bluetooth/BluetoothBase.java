@@ -35,16 +35,16 @@ public class BluetoothBase implements TransBase {
     private DataOutputStream out;
 
 
-    private String btDevAddress;
+    private String mac;
 
-    public void setBtDevAddress(String btDevAddress) {
-        this.btDevAddress = btDevAddress;
+    public void setMac(String mac) {
+        this.mac = mac;
     }
 
 
     @Override
     public boolean connect() {
-        if (btDevAddress == null) {
+        if (mac == null) {
             LogUtil.i(TAG, "bt address not set");
             MsgCode.setLastErrorCode(MsgCode.ER_BT_ADDRESS_NULL);
             return false;
@@ -52,8 +52,8 @@ public class BluetoothBase implements TransBase {
         if (btSocket != null) {
             disconnect();
         }
-        btDev = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(btDevAddress);
-        LogUtil.i(TAG, "bt socket connecting to " + btDevAddress + " ...");
+        btDev = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(mac);
+        LogUtil.i(TAG, "bt socket connecting to " + mac + " ...");
         boolean flag_connect = false;
         if (connectRFCommSocket()) {
             flag_connect = true;
@@ -286,6 +286,6 @@ public class BluetoothBase implements TransBase {
     }
 
     public String getMac() {
-        return btDevAddress;
+        return mac;
     }
 }

@@ -6,15 +6,15 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
 abstract class BaseDao<T>(private val helper: SQLiteOpenHelper) {
-    protected fun openReader(): SQLiteDatabase {
+    private fun openReader(): SQLiteDatabase {
         return helper.readableDatabase
     }
 
-    protected fun openWriter(): SQLiteDatabase {
+    private fun openWriter(): SQLiteDatabase {
         return helper.writableDatabase
     }
 
-    protected fun closeDatabase(database: SQLiteDatabase?, cursor: Cursor?) {
+    private fun closeDatabase(database: SQLiteDatabase?, cursor: Cursor?) {
         if (cursor != null && !cursor.isClosed) {
             cursor.close()
         }
@@ -64,7 +64,7 @@ abstract class BaseDao<T>(private val helper: SQLiteOpenHelper) {
             e.printStackTrace()
         } finally {
             database.endTransaction()
-            closeDatabase(database, null as Cursor?)
+            closeDatabase(database, null )
         }
         return 0
     }
@@ -127,7 +127,7 @@ abstract class BaseDao<T>(private val helper: SQLiteOpenHelper) {
             e.printStackTrace()
         } finally {
             database.endTransaction()
-            closeDatabase(database, null as Cursor?)
+            closeDatabase(database, null)
         }
         return 0L
     }
@@ -136,14 +136,14 @@ abstract class BaseDao<T>(private val helper: SQLiteOpenHelper) {
         val database = openWriter()
         try {
             database.beginTransaction()
-            val id = database.insert(tableName, null as String?, getContentValues(t))
+            val id = database.insert(tableName, null , getContentValues(t))
             database.setTransactionSuccessful()
             return id
         } catch (e: Exception) {
             e.printStackTrace()
         } finally {
             database.endTransaction()
-            closeDatabase(database, null as Cursor?)
+            closeDatabase(database, null)
         }
         return 0L
     }
@@ -160,7 +160,7 @@ abstract class BaseDao<T>(private val helper: SQLiteOpenHelper) {
             e.printStackTrace()
         } finally {
             database.endTransaction()
-            closeDatabase(database, null as Cursor?)
+            closeDatabase(database, null )
         }
         return 0
     }
