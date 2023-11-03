@@ -32,9 +32,10 @@ object DialogUtil {
                 dialogInterface.dismiss()
                 callback1?.onClick(dialogInterface)
             }
-            setNegativeButton(context.getString(R.string.cancel)) { dialogInterface, _ ->
-                callback2?.onClick(dialogInterface)
-            }
+            if (callback2 != null)
+                setNegativeButton(context.getString(R.string.cancel)) { dialogInterface, _ ->
+                    callback2?.onClick(dialogInterface)
+                }
 
         }.create()
     }

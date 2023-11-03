@@ -15,7 +15,7 @@
 
         <ImageView
             android:id="@+id/btn_back"
-            android:layout_width="35dp"
+            android:layout_width="35dp" app:tint="@color/theme"
             android:layout_height="35dp"
             android:layout_centerVertical="true"
             android:onClick="onViewClick"
@@ -49,7 +49,7 @@
             android:layout_marginTop="10dp"
             android:text="@string/search"
             app:icon="@mipmap/search"
-            app:iconTint="@color/gray" />
+            app:iconTint="@color/black" />
 
 
         <LinearLayout
@@ -81,7 +81,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_gravity="center_vertical"
-                    android:indeterminateTint="@color/gray"
+                    android:indeterminateTint="@color/black"
                     android:indeterminateTintMode="src_atop" />
             </LinearLayout>
 

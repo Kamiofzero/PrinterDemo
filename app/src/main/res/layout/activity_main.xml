@@ -20,6 +20,7 @@
             android:layout_marginLeft="15dp"
             android:drawableLeft="@mipmap/logo"
             android:drawablePadding="15dp"
+            android:drawableTint="@color/black"
             android:text="@string/app_name"
             android:textColor="@color/theme"
             android:textSize="24dp"
@@ -47,7 +48,7 @@
         app:backgroundTint="@color/white"
         app:icon="@mipmap/device"
         app:iconPadding="15dp"
-        app:iconTint="@color/gray"
+        app:iconTint="@color/black"
         app:rippleColor="@color/gray" />
 
     <com.google.android.material.button.MaterialButton
@@ -56,7 +57,7 @@
         android:layout_marginTop="5dp"
         android:text="@string/setting"
         app:icon="@mipmap/setting"
-        app:iconTint="@color/gray" />
+        app:iconTint="@color/black" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_about"
@@ -64,5 +65,5 @@
         android:layout_marginTop="5dp"
         android:text="@string/about"
         app:icon="@mipmap/about"
-        app:iconTint="@color/gray" />
+        app:iconTint="@color/black" />
 </LinearLayout>

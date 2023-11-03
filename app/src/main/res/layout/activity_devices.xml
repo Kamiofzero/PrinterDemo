@@ -19,7 +19,8 @@
             android:layout_height="35dp"
             android:layout_centerVertical="true"
             android:onClick="onViewClick"
-            android:src="@mipmap/back" />
+            android:src="@mipmap/back"
+            app:tint="@color/theme" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -40,7 +41,8 @@
         style="@style/TextButton"
         android:layout_marginTop="10dp"
         android:text="@string/addDevice"
-        app:icon="@mipmap/add" />
+        app:icon="@mipmap/add"
+        app:iconTint="@color/black" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -73,7 +75,8 @@
                 android:layout_centerVertical="true"
                 android:layout_marginRight="10dp"
                 android:onClick="onViewClick"
-                android:src="@mipmap/min" />
+                android:src="@mipmap/min2"
+                app:tint="@color/black" />
 
         </RelativeLayout>
 
@@ -81,10 +84,10 @@
             android:id="@+id/rv_devices"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="none"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
-            android:layout_marginBottom="5dp" />
+            android:layout_marginBottom="5dp"
+            android:scrollbars="none" />
     </LinearLayout>
 
 </LinearLayout>

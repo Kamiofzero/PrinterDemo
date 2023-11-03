@@ -15,7 +15,7 @@
 
         <ImageView
             android:id="@+id/btn_back"
-            android:layout_width="35dp"
+            android:layout_width="35dp" app:tint="@color/theme"
             android:layout_height="35dp"
             android:layout_centerVertical="true"
             android:onClick="onViewClick"

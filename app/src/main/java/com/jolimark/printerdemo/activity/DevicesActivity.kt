@@ -34,7 +34,6 @@ class DevicesActivity : BaseActivity<ActivityDevicesBinding>() {
                     return
                 }
                 mAdapter.apply {
-                    vb.btnDeleteDevice.setImageResource(if (deleteMode) R.mipmap.min else R.mipmap.min2)
                     deleteModeEnable(!mAdapter.deleteMode)
                 }
             }
@@ -78,6 +77,7 @@ class DevicesActivity : BaseActivity<ActivityDevicesBinding>() {
                 override fun onClick(dialog: DialogInterface) {
                     JmPrinter.removePrinter(basePrinter)
                     PrinterTableDao.INSTANCE.delete(PrinterBean(basePrinter))
+                    mAdapter.setList(JmPrinter.getPrinters())
                 }
 
             }, null
@@ -121,7 +121,6 @@ class DevicesActivity : BaseActivity<ActivityDevicesBinding>() {
                 visibility = if (deleteMode) View.VISIBLE else View.INVISIBLE
                 setOnClickListener {
                     removeDevice(basePrinter)
-                    notifyDataSetChanged()
                 }
             }
             holder.vb.root.setOnClickListener {

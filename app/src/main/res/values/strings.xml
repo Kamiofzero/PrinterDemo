@@ -51,8 +51,8 @@
     <string name="printPrn">Print Prn</string>
     <string name="printFile">Print File</string>
     <string name="printWifi">WiFi</string>
-    <string name="bluetooth">Bluetooth</string>
-    <string name="usb">Usb</string>
+    <string name="bluetooth">蓝牙</string>
+    <string name="usb">USB</string>
     <string name="devices">设备</string>
     <string name="devicesList">设备列表</string>
     <string name="addDevice">添加设备</string>
@@ -65,8 +65,23 @@
     <string name="connectAp">连接热点</string>
     <string name="ip">IP  例如：192.168.5.163</string>
     <string name="port">端口  例如：9100</string>
-    <string name="usbevices">USB设备</string>
+    <string name="usbDevices">USB设备</string>
     <string name="tip_usbDenied">usb设备权限被拒绝</string>
     <string name="tip_selectDevice">选择打印设备</string>
+    <string name="verification">连接验证</string>
+    <string name="preventLost">防丢单模式</string>
+    <string name="wifiPackage">WiFi传输分包大小</string>
+    <string name="btPackage">蓝牙传输分包大小</string>
+    <string name="usbPackage">USB传输分包大小</string>
+    <string name="WifiSendDelay">wifi传输分包发送间隔</string>
+    <string name="btSendDelay">蓝牙传输传输分包发送间隔</string>
+    <string name="usbSendDelay">USB传输传输分包发送间隔</string>
+    <string name="bytes">字节</string>
+    <string name="wifi">WiFi</string>
+    <string name="common">通用</string>
+    <string name="packageSize">传输分包大小</string>
+    <string name="sendDelay">分包发送延迟</string>
+    <string name="ms">毫秒</string>
+    <string name="version">版本号</string>
 
 </resources>

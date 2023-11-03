@@ -16,7 +16,7 @@
         <ImageView
             android:id="@+id/btn_back"
             android:layout_width="35dp"
-            android:layout_height="35dp"
+            android:layout_height="35dp" app:tint="@color/theme"
             android:layout_centerVertical="true"
             android:onClick="onViewClick"
             android:src="@mipmap/back" />
@@ -39,7 +39,7 @@
         android:layout_marginTop="10dp"
         android:text="@string/printWifi"
         app:icon="@mipmap/wifi"
-        app:iconTint="@color/gray" />
+        app:iconTint="@color/black" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_bluetooth"
@@ -47,7 +47,7 @@
         android:layout_marginTop="5dp"
         android:text="@string/bluetooth"
         app:icon="@mipmap/bluetooth"
-        app:iconTint="@color/gray" />
+        app:iconTint="@color/black" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_usb"
@@ -55,6 +55,6 @@
         android:layout_marginTop="5dp"
         android:text="@string/usb"
         app:icon="@mipmap/usb"
-        app:iconTint="@color/gray" />
+        app:iconTint="@color/black" />
 
 </LinearLayout>

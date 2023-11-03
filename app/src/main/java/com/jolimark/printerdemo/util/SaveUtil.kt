@@ -1,44 +1,92 @@
 package com.jolimark.printerdemo.util
 
 import android.content.Context
-import com.jolimark.printer.printer.BasePrinter
-import com.jolimark.printer.printer.BluetoothPrinter
-import com.jolimark.printer.printer.UsbPrinter
-import com.jolimark.printer.printer.WifiPrinter
-import com.jolimark.printer.trans.TransType
-import com.jolimark.printer.util.LogUtil
+import com.jolimark.printerdemo.config.Config
 
-object SaveUtil {
+object SettingUtil {
 
-    fun savePrinter(context: Context, basePrinter: BasePrinter) {
-        context.getSharedPreferences("printer", Context.MODE_PRIVATE).edit().apply {
-            var str = ""
-            when (basePrinter.transtype) {
-                TransType.WIFI -> {
-                    var wifiPrinter = basePrinter as WifiPrinter
-                    str = "wifi/${wifiPrinter.ip}/${wifiPrinter.port}"
-                }
 
-                TransType.BLUETOOTH -> {
-                    var bluetoothPrinter = basePrinter as BluetoothPrinter
-                    str = "bluetooth/${bluetoothPrinter.mac}"
-                }
+    private var config = Config()
 
-                TransType.USB -> {
-                    var usbPrinter = basePrinter as UsbPrinter
-                    str = "usb/${usbPrinter.device?.vendorId}/${usbPrinter.device?.productId}"
-                }
-            }
-            LogUtil.i("SaveUtil", "save: $str")
-            putString("info", str)
+
+    val connectVerify: Boolean
+        get() = config.connectVerify
+    val preventLost: Boolean
+        get() = config.preventLost
+    val usbPrinterSendDelay: Int
+        get() = config.usbPrinterSendDelay
+    val usbPrinterPackageSize: Int
+        get() = config.usbPrinterPackageSize
+
+    val bluetoothPrinterSendDelay: Int
+        get() = config.bluetoothPrinterSendDelay
+    val bluetoothPrinterPackageSize: Int
+        get() = config.bluetoothPrinterPackageSize
+
+    val wifiPrinterSendDelay: Int
+        get() = config.wifiPrinterSendDelay
+
+    val wifiPrinterPackageSize: Int
+        get() = config.wifiPrinterPackageSize
+
+    fun loadSetting(context: Context) {
+        context.getSharedPreferences("config", Context.MODE_PRIVATE).apply {
+            config.connectVerify = getBoolean("connectVerify", true)
+            config.preventLost = getBoolean("preventLost", false)
+        }
+    }
+
+
+    fun saveSetting(context: Context) {
+        context.getSharedPreferences("config", Context.MODE_PRIVATE).edit().apply {
+            putBoolean("connectVerify", config.connectVerify)
+            putBoolean("preventLost", config.preventLost)
+            putInt("wifiPrinterPackageSize", config.wifiPrinterPackageSize)
+            putInt("bluetoothPrinterPackageSize", config.bluetoothPrinterPackageSize)
+            putInt("usbPrinterPackageSize", config.usbPrinterPackageSize)
+            putInt("wifiPrinterSendDelay", config.wifiPrinterSendDelay)
+            putInt("bluetoothPrinterSendDelay", config.bluetoothPrinterSendDelay)
+            putInt("usbPrinterSendDelay", config.usbPrinterSendDelay)
             commit()
         }
     }
 
-    fun loadPrinters(): MutableList<BasePrinter> {
-        var list = mutableListOf<BasePrinter>()
 
-
-        return list
+    fun setConnectVerify(boolean: Boolean) {
+        config.connectVerify = boolean
     }
+
+    fun setPreventLost(boolean: Boolean) {
+        config.preventLost = boolean
+    }
+
+
+    fun setWifiPrinterPackageSize(size: Int) {
+        config.wifiPrinterPackageSize = size
+    }
+
+    fun setBluetoothPrinterPackageSize(size: Int) {
+        config.bluetoothPrinterPackageSize = size
+    }
+
+    fun setUsbPrinterPackageSize(size: Int) {
+        config.usbPrinterPackageSize = size
+
+    }
+
+    fun setWifiPrinterSendDelay(delayMs: Int) {
+        config.wifiPrinterSendDelay = delayMs
+    }
+
+    fun setBluetoothPrinterSendDelay(delayMs: Int) {
+        config.bluetoothPrinterSendDelay = delayMs
+
+    }
+
+    fun setUsbPrinterSendDelay(delayMs: Int) {
+        config.usbPrinterSendDelay = delayMs
+
+    }
+
+
 }

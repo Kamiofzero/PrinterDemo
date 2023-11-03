@@ -16,7 +16,7 @@
         <ImageView
             android:id="@+id/btn_back"
             android:layout_width="35dp"
-            android:layout_height="35dp"
+            android:layout_height="35dp" app:tint="@color/theme"
             android:layout_centerVertical="true"
             android:onClick="onViewClick"
             android:src="@mipmap/back" />
@@ -44,7 +44,7 @@
         app:backgroundTint="@color/white"
         app:icon="@mipmap/print_text"
         app:iconPadding="15dp"
-        app:iconTint="@color/gray" />
+        app:iconTint="@color/black" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_printImage"
@@ -57,7 +57,7 @@
         app:backgroundTint="@color/white"
         app:icon="@mipmap/print_image"
         app:iconPadding="15dp"
-        app:iconTint="@color/gray" />
+        app:iconTint="@color/black" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_printPrn"
@@ -70,7 +70,7 @@
         app:backgroundTint="@color/white"
         app:icon="@mipmap/print_prn"
         app:iconPadding="15dp"
-        app:iconTint="@color/gray" />
+        app:iconTint="@color/black" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_printFile"
@@ -83,5 +83,5 @@
         app:backgroundTint="@color/white"
         app:icon="@mipmap/print_file"
         app:iconPadding="15dp"
-        app:iconTint="@color/gray" />
+        app:iconTint="@color/black" />
 </LinearLayout>

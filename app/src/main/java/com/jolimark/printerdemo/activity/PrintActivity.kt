@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
@@ -17,6 +16,7 @@ import com.jolimark.printerdemo.R
 import com.jolimark.printerdemo.databinding.ActivityPrintBinding
 import com.jolimark.printerdemo.databinding.DialogSelectPrinterBinding
 import com.jolimark.printerdemo.databinding.ItemDeviceBinding
+import com.jolimark.printerdemo.util.SettingUtil
 
 class PrintActivity : BaseActivity<ActivityPrintBinding>() {
 
@@ -64,11 +64,6 @@ class PrintActivity : BaseActivity<ActivityPrintBinding>() {
             vb.rv.apply {
                 layoutManager = LinearLayoutManager(context)
                 itemAnimator = DefaultItemAnimator()
-//                addItemDecoration(
-//                    DividerItemDecoration(
-//                        context, LinearLayoutManager.VERTICAL
-//                    )
-//                )
                 var mAdapter = DevicesAdapter()
                 adapter = mAdapter
                 mAdapter.setList(JmPrinter.getPrinters())
@@ -80,6 +75,12 @@ class PrintActivity : BaseActivity<ActivityPrintBinding>() {
 
     private fun onSelectPrinter(printer: BasePrinter) {
         LogUtil.i(TAG, "select printer: ${printer.deviceInfo}")
+        printer.enableVerification(SettingUtil.connectVerify)
+        when (printer.transtype) {
+            TransType.WIFI -> "WiFi Printer"
+            TransType.BLUETOOTH -> "Bluetooth Printer"
+            TransType.USB -> "USB Printer"
+        }
         selectDialog?.dismiss()
         when (printItem) {
             PRINT_TEXT -> {

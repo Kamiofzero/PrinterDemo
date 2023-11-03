@@ -6,6 +6,7 @@ import com.jolimark.printer.printer.JmPrinter
 import com.jolimark.printerdemo.R
 import com.jolimark.printerdemo.databinding.ActivityMainBinding
 import com.jolimark.printerdemo.db.PrinterTableDao
+import com.jolimark.printerdemo.util.SettingUtil
 
 class MainActivity : BaseActivity<ActivityMainBinding>() {
 
@@ -23,6 +24,17 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             R.id.btn_devices -> {
                 launchActivityForResult(DevicesActivity::class.java, REQUEST_DEVICES)
             }
+
+            R.id.btn_setting -> {
+                launchActivity(SettingActivity::class.java)
+            }
+
+            R.id.btn_about -> {
+                packageManager.getPackageInfo(packageName, 0).apply {
+
+                    dialog(getString(R.string.version) + ":${this.versionName}\r\n")
+                }
+            }
         }
 
     }
@@ -33,11 +45,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     }
 
     override fun initView() {
-        vb.btnPrint.icon = getDrawable(R.mipmap.forbid)
+
     }
 
     override fun initData() {
         loadPrinters()
+        SettingUtil.loadSetting(context)
     }
 
     private fun loadPrinters() {
@@ -45,6 +58,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         list.forEach {
             JmPrinter.addPrinter(it.toPrinter())
         }
+        vb.btnPrint.icon =
+            if (list.size > 0) getDrawable(R.mipmap.allow) else getDrawable(R.mipmap.forbid)
     }
 
     override fun onDestroy() {

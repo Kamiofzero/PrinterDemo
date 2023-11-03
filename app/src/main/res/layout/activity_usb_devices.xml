@@ -16,7 +16,7 @@
         <ImageView
             android:id="@+id/btn_back"
             android:layout_width="35dp"
-            android:layout_height="35dp"
+            android:layout_height="35dp" app:tint="@color/theme"
             android:layout_centerVertical="true"
             android:onClick="onViewClick"
             android:src="@mipmap/back" />
@@ -27,7 +27,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
             android:layout_toRightOf="@id/btn_back"
-            android:text="@string/usbevices"
+            android:text="@string/usbDevices"
             android:textColor="@color/theme"
             android:textSize="24dp"
             android:textStyle="bold" />
@@ -48,7 +48,7 @@
             android:layout_marginTop="10dp"
             android:text="@string/search"
             app:icon="@mipmap/search"
-            app:iconTint="@color/gray" />
+            app:iconTint="@color/black" />
 
 
         <LinearLayout

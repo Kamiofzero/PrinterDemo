@@ -90,7 +90,7 @@ public class JmPrinter {
     }
 
     public static void removePrinter(BasePrinter printer) {
-        printerHashMap.remove(printer);
+        printerHashMap.remove(printer.getName());
     }
 
     public static void release() {

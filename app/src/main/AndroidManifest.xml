@@ -22,6 +22,9 @@
         android:theme="@style/Theme.PrinterDemo"
         tools:targetApi="31">
         <activity
+            android:name=".activity.SettingActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.IpSetActivity"
             android:exported="false" />
         <activity
