@@ -23,7 +23,7 @@ import java.util.Iterator;
  * Created by ljbin on 2018/1/31.
  */
 
-public class UsbBase implements TransBase {
+public class UsbBase extends TransBase {
 
     private final String TAG = "UsbBase";
 
@@ -186,7 +186,7 @@ public class UsbBase implements TransBase {
             MsgCode.setLastErrorCode(MsgCode.ER_USB_DEVICE_CONNECT_FAIL);
             return false;
         }
-
+        isConnected = true;
         return true;
     }
 
@@ -261,6 +261,7 @@ public class UsbBase implements TransBase {
             if (mConnection != null) {
                 mConnection.releaseInterface(mUsbInterface);
                 mConnection.close();
+                isConnected = false;
                 LogUtil.i(TAG, "close device connection.");
             }
         } catch (Exception e) {

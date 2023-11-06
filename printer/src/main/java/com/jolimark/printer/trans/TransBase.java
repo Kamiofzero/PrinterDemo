@@ -1,11 +1,17 @@
 package com.jolimark.printer.trans;
 
-public interface TransBase {
-    boolean connect();
+public abstract class TransBase {
+    public abstract boolean connect();
 
-    boolean sendData(byte[] bytes);
+    public abstract boolean sendData(byte[] bytes);
 
-    int receiveData(byte[] buffer, int timeout);
+    public abstract int receiveData(byte[] buffer, int timeout);
 
-    void disconnect();
+    public abstract void disconnect();
+
+    protected boolean isConnected;
+
+    public boolean isConnected() {
+        return isConnected;
+    }
 }

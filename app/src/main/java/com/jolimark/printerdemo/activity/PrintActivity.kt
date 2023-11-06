@@ -75,13 +75,26 @@ class PrintActivity : BaseActivity<ActivityPrintBinding>() {
 
     private fun onSelectPrinter(printer: BasePrinter) {
         LogUtil.i(TAG, "select printer: ${printer.deviceInfo}")
-        printer.enableVerification(SettingUtil.connectVerify)
-        when (printer.transtype) {
-            TransType.WIFI -> "WiFi Printer"
-            TransType.BLUETOOTH -> "Bluetooth Printer"
-            TransType.USB -> "USB Printer"
-        }
         selectDialog?.dismiss()
+        printer.apply {
+            enableVerification(SettingUtil.connectVerify)
+            when (transtype) {
+                TransType.WIFI -> {
+                    setPackageSize(SettingUtil.wifiPrinterPackageSize)
+                    setSendDelay(SettingUtil.wifiPrinterSendDelay)
+                }
+
+                TransType.BLUETOOTH -> {
+                    setPackageSize(SettingUtil.wifiPrinterPackageSize)
+                    setSendDelay(SettingUtil.wifiPrinterSendDelay)
+                }
+
+                TransType.USB -> {
+                    setPackageSize(SettingUtil.wifiPrinterPackageSize)
+                    setSendDelay(SettingUtil.wifiPrinterSendDelay)
+                }
+            }
+        }
         when (printItem) {
             PRINT_TEXT -> {
                 printText(printer)

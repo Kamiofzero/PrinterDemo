@@ -15,8 +15,8 @@
 
         <ImageView
             android:id="@+id/btn_back"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:onClick="onViewClick"
             android:src="@mipmap/cancel"
@@ -35,8 +35,8 @@
 
         <ImageView
             android:id="@+id/btn_confirm"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:onClick="onViewClick"
@@ -168,7 +168,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/bytes"
                         android:textColor="@color/black"
-                        android:textSize="18dp" />
+                        android:textSize="16dp" />
                 </LinearLayout>
 
             </RelativeLayout>
@@ -215,7 +215,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/ms"
                         android:textColor="@color/black"
-                        android:textSize="18dp" />
+                        android:textSize="16dp" />
                 </LinearLayout>
 
 
@@ -277,7 +277,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/bytes"
                         android:textColor="@color/black"
-                        android:textSize="18dp" />
+                        android:textSize="16dp" />
                 </LinearLayout>
 
             </RelativeLayout>
@@ -323,7 +323,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/ms"
                         android:textColor="@color/black"
-                        android:textSize="18dp" />
+                        android:textSize="16dp" />
                 </LinearLayout>
             </RelativeLayout>
 
@@ -383,7 +383,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/bytes"
                         android:textColor="@color/black"
-                        android:textSize="18dp" />
+                        android:textSize="16dp" />
                 </LinearLayout>
             </RelativeLayout>
 
@@ -428,7 +428,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/ms"
                         android:textColor="@color/black"
-                        android:textSize="18dp" />
+                        android:textSize="16dp" />
                 </LinearLayout>
 
             </RelativeLayout>

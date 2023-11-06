@@ -1,6 +1,7 @@
 package com.jolimark.printerdemo.activity
 
 import android.view.View
+import android.widget.EditText
 import com.jolimark.printerdemo.R
 import com.jolimark.printerdemo.databinding.ActivitySettingBinding
 import com.jolimark.printerdemo.util.SettingUtil
@@ -41,6 +42,53 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
     }
 
     override fun initView() {
+        vb.etWifiPackageSize.setOnFocusChangeListener { v, hasFocus ->
+            if (!hasFocus) {
+                (v as EditText).apply {
+                    if (text.toString().isEmpty() || text.toString().toInt() < 512)
+                        setText("512")
+                }
+            }
+        }
+        vb.etWifiSendDelay.setOnFocusChangeListener { v, hasFocus ->
+            if (!hasFocus)
+                (v as EditText).apply {
+                    if (text.toString().isEmpty())
+                        setText("0")
+                }
+        }
+
+        vb.etBtPackageSize.setOnFocusChangeListener { v, hasFocus ->
+            if (!hasFocus) {
+                (v as EditText).apply {
+                    if (text.toString().isEmpty() || text.toString().toInt() < 512)
+                        setText("512")
+                }
+            }
+        }
+        vb.etBtSendDelay.setOnFocusChangeListener { v, hasFocus ->
+            if (!hasFocus)
+                (v as EditText).apply {
+                    if (text.toString().isEmpty())
+                        setText("0")
+                }
+        }
+
+        vb.etUsbPackageSize.setOnFocusChangeListener { v, hasFocus ->
+            if (!hasFocus) {
+                (v as EditText).apply {
+                    if (text.toString().isEmpty() || text.toString().toInt() < 3840)
+                        setText("3840")
+                }
+            }
+        }
+        vb.etUsbSendDelay.setOnFocusChangeListener { v, hasFocus ->
+            if (!hasFocus)
+                (v as EditText).apply {
+                    if (text.toString().isEmpty())
+                        setText("0")
+                }
+        }
     }
 
     override fun initData() {

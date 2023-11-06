@@ -17,7 +17,7 @@ import java.util.TimerTask;
  * Created by ljbin on 2018/2/23.
  */
 
-public class WifiBase implements TransBase {
+public class WifiBase extends TransBase {
 
     private final String TAG = "WifiBase";
 
@@ -74,6 +74,7 @@ public class WifiBase implements TransBase {
             MsgCode.setLastErrorCode(MsgCode.ER_WIFI_CONNECT_FAIL);
             return false;
         }
+        isConnected = true;
         LogUtil.i(TAG, "socket connect success.");
         return true;
     }
@@ -172,6 +173,7 @@ public class WifiBase implements TransBase {
             if (in != null) {
                 in.close();
             }
+            isConnected = false;
             LogUtil.i(TAG, "socket close.");
         } catch (IOException e) {
             e.printStackTrace();

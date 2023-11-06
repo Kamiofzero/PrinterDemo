@@ -10,22 +10,11 @@ import java.util.List;
 import java.util.Random;
 import java.util.zip.CRC32;
 
-public class Comm {
+public class Comm extends CommBase {
     private final String TAG = getClass().getSimpleName();
 
-    private TransBase transBase;
-    private int packageSize;
-    private long sendDelay;
-
-    private PrinterInfo printerInfo;
-
-    private boolean enableVerification = true;
-
-
-    private int clientCode;
-
     public Comm(TransBase transBase) {
-        this.transBase = transBase;
+        super(transBase);
     }
 
     public boolean connect() {
@@ -157,8 +146,12 @@ public class Comm {
         return rtnValue;
     }
 
-    public boolean sendData(byte[] bytes) {
-        List<byte[]> bytesList = ByteArrayUtil.splitArray(bytes, packageSize);
+    public void disconnect() {
+        transBase.disconnect();
+    }
+
+    @Override
+    public boolean sendData_(List<byte[]> bytesList) {
         for (int i = 0; i < bytesList.size(); ++i) {
             LogUtil.i(TAG, "send package " + i + ".");
             byte[] array = (byte[]) bytesList.get(i);
@@ -171,33 +164,7 @@ public class Comm {
                 var5.printStackTrace();
             }
         }
-
         return true;
-    }
-
-    public void disconnect() {
-        transBase.disconnect();
-    }
-
-    public void setPackageSize(int packageSize) {
-        this.packageSize = packageSize;
-    }
-
-    public void setSendDelay(long sendDelay) {
-        this.sendDelay = sendDelay;
-    }
-
-    public PrinterInfo getPrinterInfo() {
-        return printerInfo;
-    }
-
-
-    public void enableVerification(boolean enable) {
-        enableVerification = enable;
-    }
-
-    public void setClientCode(int clientCode) {
-        this.clientCode = clientCode;
     }
 
 }

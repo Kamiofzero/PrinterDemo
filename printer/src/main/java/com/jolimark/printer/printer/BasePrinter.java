@@ -11,6 +11,9 @@ import com.jolimark.printer.bean.PrinterInfo;
 import com.jolimark.printer.callback.Callback;
 import com.jolimark.printer.common.MsgCode;
 import com.jolimark.printer.direction.Comm;
+import com.jolimark.printer.direction.CommBase;
+import com.jolimark.printer.direction.anti_loss.Comm2;
+import com.jolimark.printer.trans.TransBase;
 import com.jolimark.printer.trans.TransType;
 import com.jolimark.printer.util.ByteArrayUtil;
 import com.jolimark.printer.util.ImageTransformer;
@@ -40,37 +43,62 @@ public abstract class BasePrinter {
     }
 
     private ExecutorService executorService;
+    private Comm comm;
+    private Comm2 comm2;
+    private CommBase commBase;
 
-    protected Comm comm;
     private Handler mainHandler;
+
+    private boolean antiLoss;
 
     public BasePrinter() {
         executorService = Executors.newSingleThreadExecutor();
-        comm = getComm();
+        comm = new Comm(getTransBase());
         comm.setPackageSize(initPackageSize());
+        comm2 = new Comm2(getTransBase());
+        comm2.setPackageSize(initPackageSize());
+        commBase = comm;
         mainHandler = new Handler(Looper.getMainLooper());
     }
 
-    protected abstract Comm getComm();
+
+    protected abstract TransBase getTransBase();
+
 
     protected abstract int initPackageSize();
 
 
     public void setPackageSize(int size) {
         comm.setPackageSize(size);
+        comm2.setPackageSize(size);
     }
 
 
-    public void setSendDelay(long sendDelay) {
+    public void setSendDelay(int sendDelay) {
         comm.setSendDelay(sendDelay);
+        comm2.setSendDelay(sendDelay);
     }
 
     public void enableVerification(boolean enable) {
         comm.enableVerification(enable);
+        comm2.enableVerification(enable);
+    }
+
+    public void enableAntiLossMode(boolean enable) {
+        if (antiLoss != enable) {
+            if (commBase.isConnected())
+                commBase.disconnect();
+
+            antiLoss = enable;
+            if (antiLoss)
+                commBase = comm2;
+            else
+                commBase = comm;
+        }
     }
 
     public PrinterInfo getPrinterInfo() {
-        return comm.getPrinterInfo();
+        return commBase.getPrinterInfo();
     }
 
     /**
@@ -117,17 +145,71 @@ public abstract class BasePrinter {
     }
 
     private void printWithCallback(byte[] bytes, Callback callback) {
-        if (!comm.connect()) {
+        if (!commBase.connect()) {
             callback(callback, FAIL);
             return;
         }
-        if (!comm.sendData(bytes)) {
+        if (!commBase.sendData(bytes)) {
             callback(callback, FAIL);
         } else {
             callback(callback, SUCCESS);
         }
-        comm.disconnect();
+        commBase.disconnect();
     }
+
+    /**
+     * 续打，需要设置防丢单模式后才能正常调用
+     *
+     * @param callback
+     */
+    public void resumePrint(Callback callback) {
+        if (!antiLoss) {
+            MsgCode.setLastErrorCode(MsgCode.ER_BIDIRECTIONAL_NOT_SWITCH_PROTOCOL);
+            callback(callback, FAIL);
+            return;
+        }
+        executorService.execute(() -> {
+            if (!commBase.connect()) {
+                callback(callback, FAIL);
+                return;
+            }
+            if (!((Comm2) commBase).resumeSend()) {
+                callback(callback, FAIL);
+            } else {
+                callback(callback, SUCCESS);
+            }
+            commBase.disconnect();
+        });
+    }
+
+
+
+    /**
+     * 重打，需要设置防丢单模式后才能正常调用
+     *
+     * @param callback
+     */
+    public void rePrint(Callback callback) {
+        if (!antiLoss) {
+            MsgCode.setLastErrorCode(MsgCode.ER_BIDIRECTIONAL_NOT_SWITCH_PROTOCOL);
+            callback(callback, FAIL);
+            return;
+        }
+        executorService.execute(() -> {
+            if (!commBase.connect()) {
+                callback(callback, FAIL);
+                return;
+            }
+            if (!((Comm2) commBase).resend()) {
+                callback(callback, FAIL);
+            } else {
+                callback(callback, SUCCESS);
+            }
+            commBase.disconnect();
+        });
+    }
+
+
 
     /**
      * 释放资源
@@ -142,28 +224,28 @@ public abstract class BasePrinter {
      * @return
      */
     public boolean connect() {
-        return comm.connect();
+        return commBase.connect();
     }
 
     /**
      * 关闭连接
      */
     public void disconnect() {
-        comm.disconnect();
+        commBase.disconnect();
     }
 
     public boolean print(byte[] bytes) {
-        return comm.sendData(bytes);
+        return commBase.sendData(bytes);
     }
 
     public boolean printText(String str) {
         byte[] bytes = ByteArrayUtil.stringToByte(str);
-        return comm.sendData(bytes);
+        return commBase.sendData(bytes);
     }
 
     public boolean printImg(Bitmap bitmap) {
         byte[] bytes = ImageTransformer.imageToData(bitmap);
-        return comm.sendData(bytes);
+        return commBase.sendData(bytes);
     }
 
     protected void callback(final Callback callback, int key) {

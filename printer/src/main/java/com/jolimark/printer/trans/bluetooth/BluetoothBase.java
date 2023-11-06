@@ -23,7 +23,7 @@ import java.lang.reflect.Method;
 import java.util.UUID;
 
 @SuppressLint("MissingPermission")
-public class BluetoothBase implements TransBase {
+public class BluetoothBase extends TransBase {
     private static final String TAG = "BluetoothBase";
 
     private static final String SPP_UUID = "00001101-0000-1000-8000-00805F9B34FB";
@@ -33,7 +33,6 @@ public class BluetoothBase implements TransBase {
 
     private DataInputStream ins;
     private DataOutputStream out;
-
 
     private String mac;
 
@@ -99,7 +98,7 @@ public class BluetoothBase implements TransBase {
             MsgCode.setLastErrorCode(MsgCode.ER_BT_CONNECT_FAIL);
             return false;
         }
-
+        isConnected = true;
         LogUtil.i(TAG, "bt socket connect success");
         return true;
     }
@@ -279,11 +278,13 @@ public class BluetoothBase implements TransBase {
                 btSocket.close();
                 btSocket = null;
             }
+            isConnected = false;
             LogUtil.i(TAG, "bt socket close");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 
     public String getMac() {
         return mac;

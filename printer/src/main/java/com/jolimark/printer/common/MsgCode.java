@@ -99,6 +99,8 @@ public final class MsgCode {
     public static final int ER_STATUS_KNIFE_ERROR = 604;
     //打印机其他错误
     public static final int ER_STATUS_OTHER_ERROR = 605;
+    //打印机过热
+    public static final int ER_STATUS_OVER_HEAT = 606;
 
     //pdf转换
     public static final int PDF_CONVERT_FAIL = 701;

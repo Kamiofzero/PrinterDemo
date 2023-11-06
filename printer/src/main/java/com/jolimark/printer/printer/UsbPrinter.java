@@ -4,23 +4,22 @@ import android.content.Context;
 import android.hardware.usb.UsbDevice;
 
 import com.jolimark.printer.direction.Comm;
+import com.jolimark.printer.trans.TransBase;
 import com.jolimark.printer.trans.TransType;
 import com.jolimark.printer.trans.usb.UsbBase;
 
 public class UsbPrinter extends BasePrinter {
 
-    private UsbBase usbBase;
-
-
-    @Override
-    protected Comm getComm() {
-        usbBase = new UsbBase();
-        return new Comm(usbBase);
-    }
+    private UsbBase usbBase= new UsbBase();
 
     @Override
     public String getDeviceInfo() {
         return "[vid:" + usbBase.getDevice().getDeviceId() + ", pid:" + usbBase.getDevice().getProductId() + "]";
+    }
+
+    @Override
+    protected TransBase getTransBase() {
+        return usbBase;
     }
 
     public UsbPrinter(Context context, int vid, int pid) {
