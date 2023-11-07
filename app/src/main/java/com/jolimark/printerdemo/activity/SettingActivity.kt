@@ -93,7 +93,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
 
     override fun initData() {
         vb.swVerification.isChecked = SettingUtil.connectVerify
-        vb.swPreventLost.isChecked = SettingUtil.preventLost
+        vb.swPreventLost.isChecked = SettingUtil.antiLost
         vb.etWifiPackageSize.setText("${SettingUtil.wifiPrinterPackageSize}")
         vb.etWifiSendDelay.setText("${SettingUtil.wifiPrinterSendDelay}")
         vb.etBtPackageSize.setText("${SettingUtil.bluetoothPrinterPackageSize}")

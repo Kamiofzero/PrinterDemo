@@ -15,51 +15,14 @@ import com.jolimark.printer.printer.JmPrinter
 import com.jolimark.printer.trans.TransType
 import com.jolimark.printer.util.LogUtil
 import com.jolimark.printerdemo.R
-import com.jolimark.printerdemo.databinding.ActivityPrintBinding
 import com.jolimark.printerdemo.databinding.DialogSelectPrinterBinding
 import com.jolimark.printerdemo.databinding.ItemDeviceBinding
 import com.jolimark.printerdemo.util.DialogUtil
 import com.jolimark.printerdemo.util.SettingUtil
 
-class PrintActivity : BaseActivity<ActivityPrintBinding>() {
+abstract class PrintBaseActivity<T : ViewBinding> : BaseActivity<T>() {
 
-    private val PRINT_TEXT = 1
-    private val PRINT_IMAGE = 2
-    private val PRINT_PRN = 3
-    private val PRINT_FILE = 4
-
-    private var printItem: Int? = null
     private var selectDialog: Dialog? = null
-    override fun onViewClick(v: View?) {
-        when (v?.id) {
-            R.id.btn_printText -> {
-//                printItem = PRINT_TEXT
-//                selectPrinter()
-                launchActivity(PrintTextActivity::class.java)
-            }
-
-            R.id.btn_printImage -> {
-                printItem = PRINT_IMAGE
-                selectPrinter()
-            }
-
-            R.id.btn_printPrn -> {
-                printItem = PRINT_PRN
-                selectPrinter()
-            }
-
-            R.id.btn_printFile -> {
-                printItem = PRINT_FILE
-                selectPrinter()
-            }
-        }
-    }
-
-    override fun initView() {
-    }
-
-    override fun initData() {
-    }
 
     private fun selectPrinter() {
         selectDialog = Dialog(context).apply {
@@ -100,58 +63,6 @@ class PrintActivity : BaseActivity<ActivityPrintBinding>() {
                 }
             }
         }
-        when (printItem) {
-            PRINT_TEXT -> {
-                printText(printer)
-            }
-
-            PRINT_IMAGE -> {
-                printImage(printer)
-
-            }
-
-            PRINT_PRN -> {
-                printPRN(printer)
-
-            }
-
-            PRINT_FILE -> {
-                printFile(printer)
-
-            }
-        }
-    }
-
-    private fun printText(printer: BasePrinter) {
-        var textBytes = "abcd"
-        printer.printText(textBytes, object : Callback {
-            override fun onSuccess() {
-                toast(getString(R.string.tip_printSuccess))
-            }
-
-            override fun onFail(code: Int, msg: String) {
-                if (printer.isAntiMode) {
-                    showAntiLossRetryDialog(printer, msg)
-                } else {
-                    toast(msg)
-                }
-            }
-
-
-        })
-    }
-
-
-    private fun printImage(printer: BasePrinter) {
-
-    }
-
-    private fun printPRN(printer: BasePrinter) {
-
-    }
-
-    private fun printFile(printer: BasePrinter) {
-
     }
 
     private fun resumePrintInAntiMode(printer: BasePrinter) {
@@ -191,8 +102,7 @@ class PrintActivity : BaseActivity<ActivityPrintBinding>() {
             })
     }
 
-
-    inner class DevicesAdapter : RecyclerView.Adapter<DeviceHolder<ItemDeviceBinding>>() {
+    inner class DevicesAdapter : RecyclerView.Adapter<DevicesAdapter.DeviceHolder>() {
         private var dataList = mutableListOf<BasePrinter>()
 
         fun setList(list: MutableList<BasePrinter>) {
@@ -204,7 +114,7 @@ class PrintActivity : BaseActivity<ActivityPrintBinding>() {
         override fun onCreateViewHolder(
             parent: ViewGroup,
             viewType: Int
-        ): DeviceHolder<ItemDeviceBinding> {
+        ): DeviceHolder {
             var vb = ItemDeviceBinding.inflate(LayoutInflater.from(context), parent, false)
             return DeviceHolder(vb.root, vb)
         }
@@ -213,7 +123,7 @@ class PrintActivity : BaseActivity<ActivityPrintBinding>() {
             return dataList.size
         }
 
-        override fun onBindViewHolder(holder: DeviceHolder<ItemDeviceBinding>, position: Int) {
+        override fun onBindViewHolder(holder: DeviceHolder, position: Int) {
             holder.vb.ivDelete.visibility = View.INVISIBLE
             var printer = dataList[position]
             holder.vb.tvType.text = when (printer.transtype) {
@@ -227,11 +137,11 @@ class PrintActivity : BaseActivity<ActivityPrintBinding>() {
             }
         }
 
-    }
+        inner class DeviceHolder(
+            itemView: View,
+            var vb: ItemDeviceBinding
+        ) : RecyclerView.ViewHolder(itemView)
 
-    inner class DeviceHolder<T : ViewBinding>(
-        itemView: View,
-        var vb: T
-    ) : RecyclerView.ViewHolder(itemView)
+    }
 
 }

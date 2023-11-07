@@ -1,9 +1,7 @@
 package com.jolimark.printer.printer;
 
 import android.content.Context;
-import android.hardware.usb.UsbDevice;
 
-import com.jolimark.printer.direction.Comm;
 import com.jolimark.printer.trans.TransBase;
 import com.jolimark.printer.trans.TransType;
 import com.jolimark.printer.trans.usb.UsbBase;
@@ -33,6 +31,11 @@ public class UsbPrinter extends BasePrinter {
     @Override
     protected int initPackageSize() {
         return 3840;
+    }
+
+    @Override
+    protected int initSendDelay() {
+        return 0;
     }
 
 //    public void initContext(Context context) {

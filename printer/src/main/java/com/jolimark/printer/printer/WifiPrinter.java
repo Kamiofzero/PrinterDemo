@@ -30,6 +30,11 @@ public class WifiPrinter extends BasePrinter {
         return 1024;
     }
 
+    @Override
+    protected int initSendDelay() {
+        return 50;
+    }
+
 //    public void setIpAndPort(String ip, int port) {
 //        wifiBase.setIpAndPort(ip, port);
 //        if (getName() == null || getName().isEmpty()) {

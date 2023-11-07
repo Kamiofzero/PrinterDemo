@@ -1,5 +1,7 @@
 package com.jolimark.printer.callback;
 
+import androidx.annotation.NonNull;
+
 public interface Callback {
     int SUCCESS = 1;
 
@@ -8,5 +10,5 @@ public interface Callback {
 
     void onSuccess();
 
-    void onFail(int code, String msg);
+    void onFail(int code, @NonNull String msg);
 }

@@ -11,7 +11,7 @@ object SettingUtil {
 
     val connectVerify: Boolean
         get() = config.connectVerify
-    val preventLost: Boolean
+    val antiLost: Boolean
         get() = config.preventLost
     val usbPrinterSendDelay: Int
         get() = config.usbPrinterSendDelay

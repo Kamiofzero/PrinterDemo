@@ -84,5 +84,9 @@
     <string name="sendDelay">分包发送延迟</string>
     <string name="ms">毫秒</string>
     <string name="version">版本号</string>
+    <string name="tip_printSuccess">发送成功</string>
+    <string name="tip_printFail">发生异常</string>
+    <string name="resumePrint">续打</string>
+    <string name="rePrint">重打</string>
 
 </resources>

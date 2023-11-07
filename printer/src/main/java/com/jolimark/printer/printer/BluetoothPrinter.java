@@ -30,6 +30,11 @@ public class BluetoothPrinter extends BasePrinter {
         return 1024;
     }
 
+    @Override
+    protected int initSendDelay() {
+        return 50;
+    }
+
 
 //    public void setMac(String address) {
 //        bluetoothBase.setMac(address);

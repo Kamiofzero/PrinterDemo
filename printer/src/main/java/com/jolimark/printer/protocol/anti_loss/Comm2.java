@@ -1,12 +1,12 @@
-package com.jolimark.printer.direction.anti_loss;
+package com.jolimark.printer.protocol.anti_loss;
 
 
 import com.jolimark.printer.bean.PrinterInfo;
 import com.jolimark.printer.common.MsgCode;
-import com.jolimark.printer.direction.anti_loss.object.PrinterStatusInfo;
-import com.jolimark.printer.direction.anti_loss.object.ReceiveHolder;
-import com.jolimark.printer.direction.anti_loss.object.ReceivePackageInfo;
-import com.jolimark.printer.direction.CommBase;
+import com.jolimark.printer.protocol.CommBase;
+import com.jolimark.printer.protocol.anti_loss.object.PrinterStatusInfo;
+import com.jolimark.printer.protocol.anti_loss.object.ReceiveHolder;
+import com.jolimark.printer.protocol.anti_loss.object.ReceivePackageInfo;
 import com.jolimark.printer.trans.TransBase;
 import com.jolimark.printer.util.ByteArrayUtil;
 import com.jolimark.printer.util.LogUtil;
@@ -19,7 +19,6 @@ import java.util.zip.CRC32;
 
 public class Comm2 extends CommBase {
     private final String TAG = "Comm2";
-    private boolean enableVerification = true;
     /**
      * 接收超时
      */
@@ -37,7 +36,7 @@ public class Comm2 extends CommBase {
         if (!transBase.connect()) {
             return false;
         }
-        if (enableVerification && !printerVerification()) {
+        if (config.enableVerification && !printerVerification()) {
             return false;
         }
         return true;
@@ -232,6 +231,13 @@ public class Comm2 extends CommBase {
         printerInfo.printerType = type;
         printerInfo.printerModel = printerModel;
         printerInfo.clientCode = clientCode;
+
+        if (config.clientCode != 0 && config.clientCode != clientCode) {
+            LogUtil.i(TAG, "client code not match.");
+            MsgCode.setLastErrorCode(MsgCode.ER_PRINTER_VERIFY);
+            return false;
+        }
+
 
         LogUtil.i(TAG, "printer verification finish.");
         return true;

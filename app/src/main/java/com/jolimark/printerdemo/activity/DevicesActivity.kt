@@ -133,7 +133,6 @@ class DevicesActivity : BaseActivity<ActivityDevicesBinding>() {
                 TransType.USB -> "USB Printer"
             }
             holder.vb.tvInfo.text = basePrinter.deviceInfo
-
         }
 
     }

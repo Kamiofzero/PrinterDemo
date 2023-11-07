@@ -1,4 +1,4 @@
-package com.jolimark.printer.direction;
+package com.jolimark.printer.protocol;
 
 import com.jolimark.printer.bean.PrinterInfo;
 import com.jolimark.printer.common.MsgCode;
@@ -21,7 +21,7 @@ public class Comm extends CommBase {
         if (!transBase.connect()) {
             return false;
         }
-        if (enableVerification && !printerVerification()) {
+        if (config.enableVerification && !printerVerification()) {
             return false;
         }
         return true;
@@ -110,12 +110,12 @@ public class Comm extends CommBase {
 
                     String printerModel = new String(temp);
                     LogUtil.i(TAG, "printer model： " + printerModel);
-                    this.printerInfo = new PrinterInfo();
-                    this.printerInfo.printerType = type;
-                    this.printerInfo.printerModel = printerModel;
-                    this.printerInfo.clientCode = clientCode;
+                    printerInfo = new PrinterInfo();
+                    printerInfo.printerType = type;
+                    printerInfo.printerModel = printerModel;
+                    printerInfo.clientCode = clientCode;
 
-                    if (this.clientCode != 0 && this.clientCode != clientCode) {
+                    if (config.clientCode != 0 && config.clientCode != clientCode) {
                         LogUtil.i(TAG, "client code not match.");
                         MsgCode.setLastErrorCode(MsgCode.ER_PRINTER_VERIFY);
                         return false;
@@ -159,7 +159,7 @@ public class Comm extends CommBase {
                 return false;
             }
             try {
-                Thread.sleep(this.sendDelay);
+                Thread.sleep(config.sendDelay);
             } catch (InterruptedException var5) {
                 var5.printStackTrace();
             }

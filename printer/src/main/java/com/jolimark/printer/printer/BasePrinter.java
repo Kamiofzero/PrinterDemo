@@ -7,12 +7,13 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
 
+import com.jolimark.printer.bean.PrinterConfig;
 import com.jolimark.printer.bean.PrinterInfo;
 import com.jolimark.printer.callback.Callback;
 import com.jolimark.printer.common.MsgCode;
-import com.jolimark.printer.direction.Comm;
-import com.jolimark.printer.direction.CommBase;
-import com.jolimark.printer.direction.anti_loss.Comm2;
+import com.jolimark.printer.protocol.Comm;
+import com.jolimark.printer.protocol.CommBase;
+import com.jolimark.printer.protocol.anti_loss.Comm2;
 import com.jolimark.printer.trans.TransBase;
 import com.jolimark.printer.trans.TransType;
 import com.jolimark.printer.util.ByteArrayUtil;
@@ -49,14 +50,16 @@ public abstract class BasePrinter {
 
     private Handler mainHandler;
 
+    private PrinterConfig config;
     private boolean antiLoss;
 
     public BasePrinter() {
         executorService = Executors.newSingleThreadExecutor();
+        config = new PrinterConfig();
+        config.packageSize = initPackageSize();
+        config.sendDelay = initSendDelay();
         comm = new Comm(getTransBase());
-        comm.setPackageSize(initPackageSize());
-        comm2 = new Comm2(getTransBase());
-        comm2.setPackageSize(initPackageSize());
+        comm.setConfig(config);
         commBase = comm;
         mainHandler = new Handler(Looper.getMainLooper());
     }
@@ -67,21 +70,23 @@ public abstract class BasePrinter {
 
     protected abstract int initPackageSize();
 
+    protected abstract int initSendDelay();
+
 
     public void setPackageSize(int size) {
-        comm.setPackageSize(size);
-        comm2.setPackageSize(size);
+        config.packageSize = size;
+        commBase.setConfig(config);
     }
 
 
     public void setSendDelay(int sendDelay) {
-        comm.setSendDelay(sendDelay);
-        comm2.setSendDelay(sendDelay);
+        config.sendDelay = sendDelay;
+        commBase.setConfig(config);
     }
 
     public void enableVerification(boolean enable) {
-        comm.enableVerification(enable);
-        comm2.enableVerification(enable);
+        config.enableVerification = enable;
+        commBase.setConfig(config);
     }
 
     public void enableAntiLossMode(boolean enable) {
@@ -90,11 +95,18 @@ public abstract class BasePrinter {
                 commBase.disconnect();
 
             antiLoss = enable;
-            if (antiLoss)
+            if (antiLoss) {
+                if (comm2 == null) comm2 = new Comm2(getTransBase());
                 commBase = comm2;
-            else
+            } else
                 commBase = comm;
+
+            commBase.setConfig(config);
         }
+    }
+
+    public boolean isAntiMode() {
+        return antiLoss;
     }
 
     public PrinterInfo getPrinterInfo() {
@@ -183,7 +195,6 @@ public abstract class BasePrinter {
     }
 
 
-
     /**
      * 重打，需要设置防丢单模式后才能正常调用
      *
@@ -208,7 +219,6 @@ public abstract class BasePrinter {
             commBase.disconnect();
         });
     }
-
 
 
     /**

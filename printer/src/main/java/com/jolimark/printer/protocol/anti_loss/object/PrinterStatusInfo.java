@@ -1,4 +1,4 @@
-package com.jolimark.printer.direction.anti_loss.object;
+package com.jolimark.printer.protocol.anti_loss.object;
 
 
 import com.jolimark.printer.common.MsgCode;

@@ -1,11 +1,11 @@
-package com.jolimark.printer.direction.anti_loss;
+package com.jolimark.printer.protocol.anti_loss;
 
 
 
 import com.jolimark.printer.common.MsgCode;
-import com.jolimark.printer.direction.anti_loss.object.PrinterStatusInfo;
-import com.jolimark.printer.direction.anti_loss.object.ReceiveHolder;
-import com.jolimark.printer.direction.anti_loss.object.ReceivePackageInfo;
+import com.jolimark.printer.protocol.anti_loss.object.PrinterStatusInfo;
+import com.jolimark.printer.protocol.anti_loss.object.ReceiveHolder;
+import com.jolimark.printer.protocol.anti_loss.object.ReceivePackageInfo;
 import com.jolimark.printer.util.ByteArrayUtil;
 import com.jolimark.printer.util.LogUtil;
 
