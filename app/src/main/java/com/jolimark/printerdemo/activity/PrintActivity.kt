@@ -32,15 +32,15 @@ class PrintActivity : BaseActivity<ActivityPrintBinding>() {
     private var selectDialog: Dialog? = null
     override fun onViewClick(v: View?) {
         when (v?.id) {
+            R.id.btn_back -> {
+                finish()
+            }
             R.id.btn_printText -> {
-//                printItem = PRINT_TEXT
-//                selectPrinter()
                 launchActivity(PrintTextActivity::class.java)
             }
 
             R.id.btn_printImage -> {
-                printItem = PRINT_IMAGE
-                selectPrinter()
+                launchActivity(PrintImgActivity::class.java)
             }
 
             R.id.btn_printPrn -> {

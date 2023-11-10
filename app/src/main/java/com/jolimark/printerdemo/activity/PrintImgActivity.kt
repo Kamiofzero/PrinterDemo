@@ -8,21 +8,21 @@ import com.jolimark.printer.callback.Callback
 import com.jolimark.printer.printer.BasePrinter
 import com.jolimark.printerdemo.R
 import com.jolimark.printerdemo.adapter.BaseAdapter
-import com.jolimark.printerdemo.bean.TextItem
-import com.jolimark.printerdemo.databinding.ActivityPrintTextBinding
+import com.jolimark.printerdemo.bean.ImgItem
+import com.jolimark.printerdemo.databinding.ActivityPrintImgBinding
 import com.jolimark.printerdemo.databinding.ItemVpBinding
 import com.jolimark.printerdemo.printContent.PrintContent
 
-
-class PrintTextActivity : PrintBaseActivity<ActivityPrintTextBinding>() {
+class PrintImgActivity : PrintBaseActivity<ActivityPrintImgBinding>() {
 
 
     private lateinit var tabTitles: MutableList<String>
 
-    private var items = mutableListOf<TextItem>()
+    private var items = mutableListOf<ImgItem>()
     override fun onPrinterSelect(printer: BasePrinter) {
+
         showProgress(getString(R.string.tip_printing))
-        printer.printText(items[vb.vp.currentItem].printData, object : Callback {
+        printer.printImg(items[vb.vp.currentItem].printData, object : Callback {
             override fun onSuccess() {
                 hideProgress()
             }
@@ -60,6 +60,7 @@ class PrintTextActivity : PrintBaseActivity<ActivityPrintTextBinding>() {
         tabTitles = mutableListOf(
             "${getString(R.string.demo)}1",
             "${getString(R.string.demo)}2",
+            "${getString(R.string.demo)}3",
         )
         TabLayoutMediator(vb.tl, vb.vp) { tab, position ->
             tab.text = tabTitles[position]
@@ -67,23 +68,18 @@ class PrintTextActivity : PrintBaseActivity<ActivityPrintTextBinding>() {
     }
 
     override fun initData() {
-
         items.apply {
-            add(TextItem(R.mipmap.text1, PrintContent.getText(context, "text1")!!))
-            add(TextItem(R.mipmap.text2, PrintContent.getText(context, "text2")!!))
+            add(ImgItem(R.mipmap.img1, PrintContent.getBitmap(context, "img1")!!))
+            add(ImgItem(R.mipmap.img2, PrintContent.getBitmap(context, "img2")!!))
+            add(ImgItem(R.mipmap.img3, PrintContent.getBitmap(context, "img3")!!))
         }.also { mAdapter.setList(it) }
     }
 
-
-    private inner class VpAdapter(context: Context) :
-        BaseAdapter<ItemVpBinding, TextItem>(context) {
-
-        override fun onBind(holder: VpHolder, list: List<TextItem>, position: Int) {
+    private inner class VpAdapter(context: Context) : BaseAdapter<ItemVpBinding, ImgItem>(context) {
+        override fun onBind(holder: VpHolder, list: List<ImgItem>, position: Int) {
             holder.vb.iv.setImageResource(list[position].resourceId)
-
         }
 
     }
-
 
 }

@@ -28,7 +28,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
             android:layout_toRightOf="@id/btn_back"
-            android:text="@string/printText"
+            android:text="@string/printImage"
             android:textColor="@color/theme"
             android:textSize="24dp"
             android:textStyle="bold" />

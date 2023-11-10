@@ -22,6 +22,9 @@
         android:theme="@style/Theme.PrinterDemo"
         tools:targetApi="31">
         <activity
+            android:name=".activity.PrintImgActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.PrintTextActivity"
             android:exported="false" />
         <activity

@@ -42,6 +42,7 @@
         android:layout_marginTop="10dp"
         android:text="@string/addDevice"
         app:icon="@mipmap/add"
+        app:iconSize="24dp"
         app:iconTint="@color/black" />
 
     <LinearLayout

@@ -24,9 +24,9 @@ abstract class PrintBaseActivity<T : ViewBinding> : BaseActivity<T>() {
 
     private var selectDialog: Dialog? = null
 
-    private fun selectPrinter() {
+    protected fun selectPrinter() {
         selectDialog = Dialog(context).apply {
-            var vb = DialogSelectPrinterBinding.inflate(LayoutInflater.from(context))
+            var vb = DialogSelectPrinterBinding.inflate(layoutInflater)
             setContentView(vb.root)
             vb.rv.apply {
                 layoutManager = LinearLayoutManager(context)
@@ -40,6 +40,7 @@ abstract class PrintBaseActivity<T : ViewBinding> : BaseActivity<T>() {
 
     }
 
+    protected abstract fun onPrinterSelect(printer: BasePrinter)
     private fun onSelectPrinter(printer: BasePrinter) {
         LogUtil.i(TAG, "select printer: ${printer.deviceInfo}")
         selectDialog?.dismiss()
@@ -63,6 +64,7 @@ abstract class PrintBaseActivity<T : ViewBinding> : BaseActivity<T>() {
                 }
             }
         }
+        onPrinterSelect(printer)
     }
 
     private fun resumePrintInAntiMode(printer: BasePrinter) {
@@ -77,7 +79,7 @@ abstract class PrintBaseActivity<T : ViewBinding> : BaseActivity<T>() {
         })
     }
 
-    private fun showAntiLossRetryDialog(basePrinter: BasePrinter, msg: String) {
+    protected fun showAntiLossRetryDialog(basePrinter: BasePrinter, msg: String) {
         var string = "${getString(R.string.tip_printFail)}: $msg"
         DialogUtil.showDialog(
             context,

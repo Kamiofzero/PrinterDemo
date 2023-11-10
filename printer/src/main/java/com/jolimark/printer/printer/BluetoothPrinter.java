@@ -5,7 +5,7 @@ import com.jolimark.printer.trans.TransType;
 import com.jolimark.printer.trans.bluetooth.BluetoothBase;
 
 public class BluetoothPrinter extends BasePrinter {
-    private BluetoothBase bluetoothBase = new BluetoothBase();
+    private BluetoothBase bluetoothBase;
 
     @Override
     public String getDeviceInfo() {
@@ -14,6 +14,7 @@ public class BluetoothPrinter extends BasePrinter {
 
     @Override
     protected TransBase getTransBase() {
+        bluetoothBase = new BluetoothBase();
         return bluetoothBase;
     }
 

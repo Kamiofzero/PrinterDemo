@@ -1,6 +1,9 @@
 package com.jolimark.printer.protocol.anti_loss;
 
 
+import static com.jolimark.printer.protocol.anti_loss.Comm2.Task.STAGE_IDLE;
+import static com.jolimark.printer.protocol.anti_loss.Comm2.Task.STAGE_SEND_TASK;
+
 import com.jolimark.printer.bean.PrinterInfo;
 import com.jolimark.printer.common.MsgCode;
 import com.jolimark.printer.protocol.CommBase;
@@ -446,7 +449,7 @@ public class Comm2 extends CommBase {
             case Task.STAGE_SWITCH_PROTOCOL_2: {
                 //切换非防丢单
                 if (switchProtocol(false)) {
-                    task.stage = Task.STAGE_IDLE;
+                    task.stage = STAGE_IDLE;
                 }
                 return true;
             }
@@ -471,24 +474,33 @@ public class Comm2 extends CommBase {
         if (task != null) {
             ReceivePackageInfo packageInfo = task.packageInfo;
             if (packageInfo != null) {
-                //通讯异常
+                //通讯异常，在重试次数范围内，自动重试
                 if (packageInfo.isCommunicationAbnormal()) {
+                    //包序号重复，在序号正常设置的情况下，即打印机收到重复的包，应更新包序号，并发送下一个内容
                     if (packageInfo.result == ReceivePackageInfo.STATUS_SAME_PACKET_NUM) {
                         updatePackageSeq();
                         task.resetTryCount();
+                        if (task.stage == STAGE_SEND_TASK) {
+                            task.byteArrayIndex++;
+                        } else if (task.stage < STAGE_IDLE) task.stage++;
                     }
-                    //打印机缓存满，直接退出流程
+                    //打印机缓存满，等待若干时间再试
                     else if (packageInfo.result == ReceivePackageInfo.STATUS_RECEIVE_BUFFER_FULL) {
-                        return false;
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                     //重试次数内，则重试
                     if (task.tryCount > 0) {
                         task.tryCount--;
                         LogUtil.i(TAG, "retry , remain " + task.tryCount + " round");
+                        dropReceiveBuff();
                         return next1(task.stage);
                     }
                 }
-                //打印机状态异常，直接退出流程
+                //打印机状态异常，通常需要手动调整打印机后再打印，直接退出流程，后续可使用续打功能
                 if (packageInfo.isPrinterAbnormal()) {
                     //虽然异常，一般数据包是收到了，包序号更新
                     updatePackageSeq();
@@ -498,11 +510,21 @@ public class Comm2 extends CommBase {
                 if (task.tryCount > 0) {
                     task.tryCount--;
                     LogUtil.i(TAG, "retry , remain " + task.tryCount + " round");
+                    dropReceiveBuff();
                     return next1(task.stage);
                 }
             }
         }
         return false;
+    }
+
+
+    /**
+     * 重试流程时，先清空一下接收缓存的数据，避免之前的返回数据影响后续的接收判断
+     */
+    private void dropReceiveBuff() {
+        int recLength = transBase.receiveData(new byte[1024], 1000);
+        LogUtil.i(TAG, "dropReceiveBuff -> " + recLength + " bytes");
     }
 
 

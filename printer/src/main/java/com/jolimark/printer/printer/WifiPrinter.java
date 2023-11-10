@@ -5,7 +5,7 @@ import com.jolimark.printer.trans.TransType;
 import com.jolimark.printer.trans.wifi.WifiBase;
 
 public class WifiPrinter extends BasePrinter {
-    private WifiBase wifiBase = new WifiBase();
+    private WifiBase wifiBase;
 
     @Override
     public String getDeviceInfo() {
@@ -14,6 +14,7 @@ public class WifiPrinter extends BasePrinter {
 
     @Override
     protected TransBase getTransBase() {
+        wifiBase = new WifiBase();
         return wifiBase;
     }
 

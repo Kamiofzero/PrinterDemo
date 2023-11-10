@@ -1,5 +1,6 @@
 package com.jolimark.printerdemo.activity
 
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.view.LayoutInflater
@@ -12,7 +13,9 @@ import androidx.viewbinding.ViewBinding
 import com.jolimark.printer.printer.BasePrinter
 import com.jolimark.printer.printer.JmPrinter
 import com.jolimark.printer.trans.TransType
+import com.jolimark.printer.util.LogUtil
 import com.jolimark.printerdemo.R
+import com.jolimark.printerdemo.adapter.BaseAdapter
 import com.jolimark.printerdemo.databinding.ActivityDevicesBinding
 import com.jolimark.printerdemo.databinding.ItemDeviceBinding
 import com.jolimark.printerdemo.db.PrinterBean
@@ -53,7 +56,7 @@ class DevicesActivity : BaseActivity<ActivityDevicesBinding>() {
 //                    context, LinearLayoutManager.VERTICAL
 //                )
 //            )
-            mAdapter = DeviceAdapter()
+            mAdapter = DeviceAdapter(context)
             adapter = mAdapter
         }
     }
@@ -84,9 +87,8 @@ class DevicesActivity : BaseActivity<ActivityDevicesBinding>() {
         )
     }
 
-    inner class DeviceAdapter : RecyclerView.Adapter<DeviceHolder<ItemDeviceBinding>>() {
-
-        private var dataList = mutableListOf<BasePrinter>()
+    inner class DeviceAdapter(context: Context) :
+        BaseAdapter<ItemDeviceBinding, BasePrinter>(context) {
 
         var deleteMode: Boolean = false
             private set
@@ -95,36 +97,13 @@ class DevicesActivity : BaseActivity<ActivityDevicesBinding>() {
             deleteMode = enable
             notifyDataSetChanged()
         }
-
-        fun setList(list: MutableList<BasePrinter>) {
-            dataList.clear()
-            if (list.size != 0) dataList.addAll(list)
-            notifyDataSetChanged()
-        }
-
-        override fun onCreateViewHolder(
-            parent: ViewGroup,
-            viewType: Int
-        ): DeviceHolder<ItemDeviceBinding> {
-
-            var vb = ItemDeviceBinding.inflate(LayoutInflater.from(context), parent, false)
-            return DeviceHolder(vb.root, vb)
-        }
-
-        override fun getItemCount(): Int {
-            return dataList.size
-        }
-
-        override fun onBindViewHolder(holder: DeviceHolder<ItemDeviceBinding>, position: Int) {
-            var basePrinter = dataList[position]
+        override fun onBind(holder: VpHolder, list: List<BasePrinter>, position: Int) {
+            var basePrinter = list[position]
             holder.vb.ivDelete.apply {
                 visibility = if (deleteMode) View.VISIBLE else View.INVISIBLE
                 setOnClickListener {
                     removeDevice(basePrinter)
                 }
-            }
-            holder.vb.root.setOnClickListener {
-
             }
 
             holder.vb.tvType.text = when (basePrinter.transtype) {
@@ -134,15 +113,5 @@ class DevicesActivity : BaseActivity<ActivityDevicesBinding>() {
             }
             holder.vb.tvInfo.text = basePrinter.deviceInfo
         }
-
     }
-
-    class DeviceHolder<T : ViewBinding> : RecyclerView.ViewHolder {
-        var vb: T
-
-        constructor(view: View, vb: T) : super(view) {
-            this.vb = vb
-        }
-    }
-
 }

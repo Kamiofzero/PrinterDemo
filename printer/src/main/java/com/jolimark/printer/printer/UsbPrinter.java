@@ -8,7 +8,7 @@ import com.jolimark.printer.trans.usb.UsbBase;
 
 public class UsbPrinter extends BasePrinter {
 
-    private UsbBase usbBase= new UsbBase();
+    private UsbBase usbBase;
 
     @Override
     public String getDeviceInfo() {
@@ -17,8 +17,10 @@ public class UsbPrinter extends BasePrinter {
 
     @Override
     protected TransBase getTransBase() {
+        usbBase = new UsbBase();
         return usbBase;
     }
+
 
     public UsbPrinter(Context context, int vid, int pid) {
         super();

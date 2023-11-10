@@ -87,5 +87,7 @@
     <string name="tip_printFail">发生异常</string>
     <string name="resumePrint">续打</string>
     <string name="rePrint">重打</string>
+    <string name="demo">示例</string>
+    <string name="tip_printing">正在打印</string>
 
 </resources>

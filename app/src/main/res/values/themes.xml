@@ -67,4 +67,5 @@
         <item name="android:thumb">@drawable/switch_thumb</item>
         <item name="android:track">@drawable/s_switch_track</item>
     </style>
+
 </resources>

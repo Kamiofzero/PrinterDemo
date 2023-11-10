@@ -99,5 +99,7 @@ public class JmPrinter {
 
     public static void addPrinter(BasePrinter printer) {
         printerHashMap.put(printer.getName(), printer);
+
     }
+
 }
