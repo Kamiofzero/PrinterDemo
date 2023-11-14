@@ -3,6 +3,9 @@ package com.jolimark.printerdemo.printContent
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileNotFoundException
 import java.io.IOException
 import java.io.InputStream
 
@@ -39,6 +42,40 @@ object PrintContent {
             }
         }
         return bytes
+    }
+
+    private fun getLocalData(filePath: String): ByteArray? {
+        var fis: FileInputStream? = null
+        var bytes: ByteArray? = null
+        try {
+            fis = FileInputStream(File(filePath))
+            bytes = ByteArray(fis.available())
+            fis.read(bytes)
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        } finally {
+            try {
+                fis?.close()
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
+        return bytes
+    }
+
+    fun getLocalText(filePath: String): String? {
+        var byteArray = getLocalData(filePath)
+        return byteArray?.toString()
+    }
+
+    fun getLocalBitmap(filePath: String): Bitmap? {
+        return BitmapFactory.decodeFile(filePath)
+    }
+
+    fun getLocalPrn(filePath: String): ByteArray? {
+        return getLocalData(filePath)
     }
 
 }

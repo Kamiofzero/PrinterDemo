@@ -89,5 +89,8 @@
     <string name="rePrint">重打</string>
     <string name="demo">示例</string>
     <string name="tip_printing">正在打印</string>
+    <string name="rootDirectory">内部存储器</string>
+    <string name="selectFile">选择文件</string>
+    <string name="tip_noSelectFile">未选择文件</string>
 
 </resources>

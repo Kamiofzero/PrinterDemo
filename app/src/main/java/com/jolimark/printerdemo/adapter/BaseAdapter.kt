@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.jolimark.printer.util.LogUtil
+import java.io.File
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.ParameterizedType
 
@@ -21,7 +22,7 @@ abstract class BaseAdapter<VB : ViewBinding, T> :
         this.context = context
     }
 
-    fun setList(list: List<T>) {
+    fun setList(list: MutableList<T>) {
         itemList.clear()
         itemList.addAll(list)
         notifyDataSetChanged()

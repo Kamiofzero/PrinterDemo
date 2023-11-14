@@ -18,10 +18,7 @@ import com.jolimark.printerdemo.util.DialogUtil
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.ParameterizedType
 
-/**
- * 工厂测试，演示等简单app使用
- *
- */
+
 abstract class BaseActivity<T : ViewBinding> : AppCompatActivity(), OnClickListener {
 
     protected val TAG = javaClass.simpleName
