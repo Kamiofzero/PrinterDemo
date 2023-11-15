@@ -34,34 +34,46 @@
             android:textStyle="bold" />
     </RelativeLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="105dp"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="8dp"
         android:layout_marginRight="20dp"
+        android:background="@drawable/bg_edit"
         android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:padding="10dp">
+
 
         <TextView
             android:id="@+id/tv_selected"
-            android:layout_width="0dp"
-            android:layout_height="55dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/bg_directory"
-            android:gravity="center"
             android:text="a.txt"
             android:textSize="16dp" />
 
-        <com.google.android.material.button.MaterialButton
+        <TextView
+            android:id="@+id/tv_tip"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/tip_noSelectFile"
+            android:textSize="16dp" />
+
+        <ImageView
             android:id="@+id/btn_selectFile"
-            style="@style/MaterialButton2"
-            android:layout_width="120dp"
-            android:layout_marginVertical="10dp"
-            android:layout_marginRight="0dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:onClick="onViewClick"
+            android:src="@mipmap/add2"
             android:text="@string/selectFile"
             android:textSize="16dp" />
-    </LinearLayout>
+    </RelativeLayout>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_print"

@@ -12,12 +12,104 @@ import com.jolimark.printerdemo.adapter.BaseAdapter
 import com.jolimark.printerdemo.databinding.ActivitySelectFileBinding
 import com.jolimark.printerdemo.databinding.ItemDirectoryBinding
 import com.jolimark.printerdemo.databinding.ItemFileBinding
+import com.jolimark.printerdemo.databinding.PopupSortBinding
 import java.io.File
+
 
 class SelectFileActivity : BaseActivity<ActivitySelectFileBinding>() {
 
+    private val SORT_NAME = 1
+    private val SORT_CREATE = 2
+    private val SORT_UP = 10
+    private val SORT_DOWN = 11
+
+    private var sortType: Int = SORT_NAME
+    private var sortDirectionName: Int = SORT_UP
+    private var sortDirectionCreate: Int = SORT_UP
+
 
     override fun onViewClick(v: View?) {
+        when (v?.id) {
+            R.id.btn_back -> {
+                finish()
+            }
+
+            R.id.btn_sort -> {
+                PopupSortBinding.inflate(layoutInflater).apply {
+                    btnName.apply {
+                        setBackgroundColor(getColor(if (sortType == SORT_NAME) R.color.gray3 else android.R.color.transparent))
+                        setCompoundDrawables(
+                            null,
+                            null,
+                            getDrawable(
+                                if (sortDirectionName == SORT_UP) R.mipmap.sort_up else (R.mipmap.sort_down)
+                            )?.apply {
+                                setBounds(0, 0, 30, 30);
+                            },
+                            null
+                        )
+                        setOnClickListener {
+                            setBackgroundColor(getColor(R.color.gray3))
+                            btnCreate.setBackgroundColor(getColor(android.R.color.transparent))
+                            if (sortType == SORT_NAME) {
+                                sortDirectionName =
+                                    if (sortDirectionName == SORT_UP) SORT_DOWN else SORT_UP
+                                setCompoundDrawables(
+                                    null, null,
+                                    getDrawable(
+                                        if (sortDirectionName == SORT_UP) R.mipmap.sort_up else (R.mipmap.sort_down)
+                                    )?.apply {
+                                        setBounds(0, 0, 30, 30);
+                                    },
+                                    null
+                                )
+                            } else
+                                sortType = SORT_NAME
+
+                            fileAdapter.getList().apply {
+                                sort(this)
+                                fileAdapter.notifyDataSetChanged()
+                            }
+                        }
+                    }
+
+                    btnCreate.apply {
+                        setBackgroundColor(getColor(if (sortType == SORT_CREATE) R.color.gray3 else android.R.color.transparent))
+                        setCompoundDrawables(
+                            null,
+                            null,
+                            getDrawable(
+                                if (sortDirectionCreate == SORT_UP) R.mipmap.sort_up else (R.mipmap.sort_down)
+                            )?.apply {
+                                setBounds(0, 0, 30, 30);
+                            },
+                            null
+                        )
+                        setOnClickListener {
+                            setBackgroundColor(getColor(R.color.gray3))
+                            btnName.setBackgroundColor(getColor(android.R.color.transparent))
+                            if (sortType == SORT_CREATE) {
+                                sortDirectionCreate =
+                                    if (sortDirectionCreate == SORT_UP) SORT_DOWN else SORT_UP
+                                setCompoundDrawables(
+                                    null, null, getDrawable(
+                                        if (sortDirectionCreate == SORT_UP) R.mipmap.sort_up else (R.mipmap.sort_down)
+                                    )?.apply {
+                                        setBounds(0, 0, 30, 30);
+                                    }, null
+                                )
+                            } else
+                                sortType = SORT_CREATE
+                            fileAdapter.getList().apply {
+                                sort(this)
+                                fileAdapter.notifyDataSetChanged()
+                            }
+                        }
+                    }
+                    showPopupWindow(v, root, 360, 300)
+                }
+            }
+        }
     }
 
     private lateinit var directoryAdapter: DirectoryAdapter
@@ -40,12 +132,23 @@ class SelectFileActivity : BaseActivity<ActivitySelectFileBinding>() {
 
     }
 
+    override fun initData() {
+        var file = Environment.getExternalStorageDirectory()
+        selectFile(file)
+    }
+
+
     private var directoryList = mutableListOf<File>()
 
 
     private fun selectFile(file: File) {
+        LogUtil.i(TAG, "select -> ${file.name}")
         if (file.isDirectory) {
+            LogUtil.i(TAG, "isDirectory")
             var tlist = mutableListOf<File>()
+            var l = file.listFiles()
+            LogUtil.i(TAG, "listFiles:${l.size}")
+
             file.listFiles()?.toMutableList()?.forEach {
                 LogUtil.i(TAG, "name:${it.name}")
                 if (it.isDirectory) tlist.add(it)
@@ -62,6 +165,7 @@ class SelectFileActivity : BaseActivity<ActivitySelectFileBinding>() {
                     }
                 }
             }
+            sort(tlist)
             fileAdapter.setList(tlist)
             directoryList.add(file)
             directoryAdapter.setList(directoryList)
@@ -90,9 +194,30 @@ class SelectFileActivity : BaseActivity<ActivitySelectFileBinding>() {
     }
 
 
-    override fun initData() {
-        var file = Environment.getExternalStorageDirectory()
-        selectFile(file)
+    private fun sort(list: MutableList<File>) {
+        if (sortType == SORT_NAME) {
+            list.sortWith(Comparator { o1, o2 ->
+                if (o1.isDirectory && o2.isFile) return@Comparator -1
+                if (o1.isFile && o2.isDirectory) 1 else {
+                    o1.name.compareTo(o2.name, true).let {
+                        if (sortDirectionName == SORT_DOWN)
+                            -it
+                        else
+                            it
+                    }
+                }
+            })
+        } else if (sortType == SORT_CREATE) {
+            list.sortWith { o1, o2 ->
+                val diff: Long = o1.lastModified() - o2.lastModified()
+                (if (diff > 0) 1 else if (diff == 0L) 0 else -1).let {
+                    if (sortDirectionCreate == SORT_DOWN)
+                        -it
+                    else
+                        it
+                }
+            }
+        }
     }
 
     private inner class DirectoryAdapter(context: Context) :

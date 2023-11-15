@@ -71,7 +71,7 @@ object PermissionUtil {
         }
         val realPermissions = permissionList.toTypedArray()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (realPermissions.size > 0) (context as Activity).requestPermissions(
+            if (realPermissions.isNotEmpty()) (context as Activity).requestPermissions(
                 realPermissions,
                 requestCode
             )

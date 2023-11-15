@@ -93,5 +93,8 @@
     <string name="rootDirectory">内部存储器</string>
     <string name="selectFile">选择文件</string>
     <string name="tip_noSelectFile">未选择文件</string>
+    <string name="tip_storageReadPermissionDenied">读取内部存储器权限被禁止，无法正常选择文件</string>
+    <string name="fileName">文件名称</string>
+    <string name="create">创建时间</string>
 
 </resources>

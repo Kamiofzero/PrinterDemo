@@ -1,17 +1,25 @@
 package com.jolimark.printerdemo.activity
 
+import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.WindowManager
+import android.widget.LinearLayout.LayoutParams
+import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.viewbinding.ViewBinding
 import com.jolimark.printerdemo.databinding.DialogProgressBinding
 import com.jolimark.printerdemo.util.DialogUtil
@@ -156,4 +164,72 @@ abstract class BaseActivity<T : ViewBinding> : AppCompatActivity(), OnClickListe
     fun dialog(msg: String) {
         DialogUtil.showDialog(context, msg)
     }
+
+
+    fun showPopupWindow(dependence: View, contextView: View, width: Int, height: Int): PopupWindow {
+        return PopupWindow(contextView,LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT).apply {
+            isOutsideTouchable = true
+            isFocusable = true
+            setBackgroundDrawable(ColorDrawable(Color.WHITE));
+            elevation = 10f
+            showAsDropDown(
+                dependence,
+                (0 - (width - dependence.width)),
+                0
+            )
+        }
+    }
+
+
+    protected val PERMISSION_WRITE_EXTERNAL_STORAGE = Manifest.permission.WRITE_EXTERNAL_STORAGE
+    protected val PERMISSION_READ_EXTERNAL_STORAGE = Manifest.permission.READ_EXTERNAL_STORAGE
+    protected val PERMISSION_ACCESS_FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION
+    protected val PERMISSION_ACCESS_COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION
+    protected val PERMISSION_BLUETOOTH_CONNECT = Manifest.permission.BLUETOOTH_CONNECT
+    protected val PERMISSION_BLUETOOTH_SCAN = Manifest.permission.BLUETOOTH_SCAN
+
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        var grantAll = true
+        grantResults.forEach {
+            if (it == PackageManager.PERMISSION_DENIED) {
+                grantAll = false
+            }
+        }
+        onPermissionResult(requestCode, grantAll)
+    }
+
+    protected open fun onPermissionResult(requestCode: Int, grantAll: Boolean) {
+
+    }
+
+
+    protected fun checkAndRequestPermission(requestCode: Int, vararg permissions: String): Boolean {
+        var flag = true
+        val permissionList = ArrayList<String>()
+        for (i in permissions.indices) {
+            val permission = permissions[i]
+            var ret = ContextCompat.checkSelfPermission(
+                context,
+                permission
+            )
+            if (ret != PackageManager.PERMISSION_GRANTED) {
+                permissionList.add(permission)
+                flag = false
+            }
+        }
+        val realPermissions = permissionList.toTypedArray()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (realPermissions.isNotEmpty())
+                requestPermissions(realPermissions, requestCode)
+        }
+        return flag
+    }
+
+
 }

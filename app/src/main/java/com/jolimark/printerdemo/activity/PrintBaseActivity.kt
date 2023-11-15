@@ -37,7 +37,6 @@ abstract class PrintBaseActivity<T : ViewBinding> : BaseActivity<T>() {
                 show()
             }
         }
-
     }
 
     protected abstract fun onPrinterSelect(printer: BasePrinter)

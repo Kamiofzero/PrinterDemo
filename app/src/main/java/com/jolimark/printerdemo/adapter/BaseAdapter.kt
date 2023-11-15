@@ -6,8 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
-import com.jolimark.printer.util.LogUtil
-import java.io.File
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.ParameterizedType
 
@@ -28,7 +26,7 @@ abstract class BaseAdapter<VB : ViewBinding, T> :
         notifyDataSetChanged()
     }
 
-    fun getList(): List<T> {
+    fun getList(): MutableList<T> {
         return itemList
     }
 

@@ -38,7 +38,6 @@ public class LogUtil {
         return true;
     }
 
-
     public static void i(String title, String msg) {
         if (isDebug) {
             android.util.Log.i(TAG, title + " -- " + msg);

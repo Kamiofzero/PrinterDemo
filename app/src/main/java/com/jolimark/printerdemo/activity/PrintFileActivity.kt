@@ -23,7 +23,13 @@ class PrintFileActivity : PrintBaseActivity<ActivityPrintFileBinding>() {
             }
 
             R.id.btn_selectFile -> {
-                launchActivityForResult(SelectFileActivity::class.java, 1)
+                if (checkAndRequestPermission(
+                        1,
+                        PERMISSION_READ_EXTERNAL_STORAGE,
+                        PERMISSION_WRITE_EXTERNAL_STORAGE
+                    )
+                )
+                    launchActivityForResult(SelectFileActivity::class.java, 1)
             }
 
             R.id.btn_print -> {
@@ -36,7 +42,7 @@ class PrintFileActivity : PrintBaseActivity<ActivityPrintFileBinding>() {
     }
 
     override fun initView() {
-
+        vb.tvSelected.visibility = View.INVISIBLE
     }
 
     private fun print(filePath: String, basePrinter: BasePrinter) {
@@ -124,10 +130,26 @@ class PrintFileActivity : PrintBaseActivity<ActivityPrintFileBinding>() {
         if (resultCode == RESULT_OK) {
             selectFilePath = data?.getStringExtra("file")?.apply {
                 File(this).apply {
-                    if (exists()) vb.tvSelected.text = name
+                    if (exists()) {
+                        vb.tvSelected.apply {
+                            visibility = View.VISIBLE
+                            text = name
+                        }
+                        vb.tvTip.visibility = View.INVISIBLE
+                    }
                 }
             }
         }
+    }
+
+    override fun onPermissionResult(requestCode: Int, grantAll: Boolean) {
+        super.onPermissionResult(requestCode, grantAll)
+        if (grantAll)
+            launchActivityForResult(SelectFileActivity::class.java, 1)
+        else
+            toast(getString(R.string.tip_storageReadPermissionDenied))
+
+
     }
 
 }
