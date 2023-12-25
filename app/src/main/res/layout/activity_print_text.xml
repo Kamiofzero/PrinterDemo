@@ -48,8 +48,7 @@
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tl"
             android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:background="@color/gray3" />
+            android:layout_height="70dp" />
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/vp"

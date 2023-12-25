@@ -12,9 +12,9 @@
     <string name="bonding">正在配对</string>
     <string name="bond_fail">配对失败</string>
     <string name="bonded">配对完成</string>
-    <string name="printing">Printing</string>
-    <string name="print_error">Print error</string>
-    <string name="tip_set_device_first">Please set device before printing</string>
+    <string name="printing">打印中</string>
+    <string name="print_error">发生错误</string>
+    <string name="tip_set_device_first">请先设置打印设备</string>
 
     <!--错误信息-->
     <string name="printer_not_connect">打印机未连接</string>
@@ -46,10 +46,10 @@
     <string name="printerInfo">打印机信息</string>
     <string name="setting">设置</string>
     <string name="about">关于</string>
-    <string name="printText">Print text</string>
-    <string name="printImage">Print Image</string>
-    <string name="printPrn">Print Prn</string>
-    <string name="printFile">Print File</string>
+    <string name="printText">文本打印</string>
+    <string name="printImage">图片打印</string>
+    <string name="printPrn">PRN文件打印</string>
+    <string name="printFile">本地文件打印</string>
     <string name="printWifi">WiFi</string>
     <string name="bluetooth">蓝牙</string>
     <string name="usb">USB</string>
