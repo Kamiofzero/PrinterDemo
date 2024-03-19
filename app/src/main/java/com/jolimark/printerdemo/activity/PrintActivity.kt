@@ -20,6 +20,7 @@ class PrintActivity : BaseActivity<ActivityPrintBinding>() {
             }
 
             R.id.btn_printPrn -> {
+                launchActivity(PrintPrnActivity::class.java)
             }
 
             R.id.btn_printFile -> {

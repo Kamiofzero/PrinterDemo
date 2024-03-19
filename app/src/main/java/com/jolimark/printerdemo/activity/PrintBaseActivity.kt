@@ -53,13 +53,13 @@ abstract class PrintBaseActivity<T : ViewBinding> : BaseActivity<T>() {
                 }
 
                 TransType.BLUETOOTH -> {
-                    setPackageSize(SettingUtil.wifiPrinterPackageSize)
-                    setSendDelay(SettingUtil.wifiPrinterSendDelay)
+                    setPackageSize(SettingUtil.bluetoothPrinterPackageSize)
+                    setSendDelay(SettingUtil.bluetoothPrinterSendDelay)
                 }
 
                 TransType.USB -> {
-                    setPackageSize(SettingUtil.wifiPrinterPackageSize)
-                    setSendDelay(SettingUtil.wifiPrinterSendDelay)
+                    setPackageSize(SettingUtil.usbPrinterPackageSize)
+                    setSendDelay(SettingUtil.usbPrinterSendDelay)
                 }
             }
         }

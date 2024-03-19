@@ -6,12 +6,9 @@ import android.content.Intent
 import android.view.View
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.viewbinding.ViewBinding
 import com.jolimark.printer.printer.BasePrinter
 import com.jolimark.printer.printer.JmPrinter
 import com.jolimark.printer.trans.TransType
-import com.jolimark.printer.util.LogUtil
 import com.jolimark.printerdemo.R
 import com.jolimark.printerdemo.adapter.BaseAdapter
 import com.jolimark.printerdemo.databinding.ActivityDevicesBinding
@@ -81,7 +78,12 @@ class DevicesActivity : BaseActivity<ActivityDevicesBinding>() {
                     mAdapter.setList(JmPrinter.getPrinters())
                 }
 
-            }, null
+            }, object : DialogUtil.Callback {
+                override fun onClick(dialog: DialogInterface) {
+
+                }
+
+            }
         )
     }
 
@@ -95,6 +97,7 @@ class DevicesActivity : BaseActivity<ActivityDevicesBinding>() {
             deleteMode = enable
             notifyDataSetChanged()
         }
+
         override fun onBind(holder: VpHolder, list: List<BasePrinter>, position: Int) {
             var basePrinter = list[position]
             holder.vb.ivDelete.apply {

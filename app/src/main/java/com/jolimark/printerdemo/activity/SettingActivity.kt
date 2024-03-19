@@ -25,6 +25,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
                     )
                     setBluetoothPrinterPackageSize(
                         vb.etBtPackageSize.text.toString().toInt()
+
                     )
                     setBluetoothPrinterSendDelay(
                         vb.etBtSendDelay.text.toString().toInt()
@@ -61,8 +62,8 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
         vb.etBtPackageSize.setOnFocusChangeListener { v, hasFocus ->
             if (!hasFocus) {
                 (v as EditText).apply {
-                    if (text.toString().isEmpty() || text.toString().toInt() < 512)
-                        setText("512")
+                    if (text.toString().isEmpty() || text.toString().toInt() < 20)
+                        setText("20")
                 }
             }
         }
