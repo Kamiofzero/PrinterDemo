@@ -69,6 +69,7 @@ public class JmPrinter {
     }
 
 
+
 //    public static <T> T getPrinter(String name) {
 //        if (name == null || name.isEmpty()) return null;
 //        BasePrinter basePrinter = printerHashMap.get(name);

@@ -7,6 +7,7 @@ import android.widget.ArrayAdapter
 import com.jolimark.printer.printer.JmPrinter
 import com.jolimark.printer.trans.usb.UsbUtil
 import com.jolimark.printer.trans.usb.UsbUtil.UsbPermissionRequestListener
+import com.jolimark.printerdemo.PrinterDemoApp
 import com.jolimark.printerdemo.R
 import com.jolimark.printerdemo.databinding.ActivityUsbDevicesBinding
 import com.jolimark.printerdemo.db.PrinterBean
@@ -14,7 +15,7 @@ import com.jolimark.printerdemo.db.PrinterTableDao
 
 class UsbDevicesActivity : BaseActivity<ActivityUsbDevicesBinding>() {
 
-    private lateinit var foundDevicesArrayAdapter: ArrayAdapter<UsbDevice>
+    private lateinit var foundDevicesArrayAdapter: ArrayAdapter<String>
     private var deviceList = mutableListOf<UsbDevice>()
     override fun onViewClick(v: View?) {
         when (v?.id) {
@@ -23,10 +24,19 @@ class UsbDevicesActivity : BaseActivity<ActivityUsbDevicesBinding>() {
             }
 
             R.id.btn_search -> {
-                var list = usbUtil.getUsbDevices(context)
-                deviceList.addAll(list)
+                deviceList.clear()
                 foundDevicesArrayAdapter.clear()
-                foundDevicesArrayAdapter.addAll(deviceList)
+                usbUtil.getUsbDevices(context).apply {
+                    deviceList.addAll(this)
+                }.forEach {
+                    foundDevicesArrayAdapter.add(
+                        """
+                    vid: ${it.vendorId}
+                    pid: ${it.productId}
+                    """.trimIndent()
+                    )
+                }
+
             }
         }
     }
@@ -35,30 +45,22 @@ class UsbDevicesActivity : BaseActivity<ActivityUsbDevicesBinding>() {
 
     override fun initView() {
 
-        foundDevicesArrayAdapter = ArrayAdapter(context, R.layout.item_device)
+        foundDevicesArrayAdapter = ArrayAdapter(context, R.layout.item_bt)
         vb.foundDevices.apply {
             adapter = foundDevicesArrayAdapter
             onItemClickListener =
                 OnItemClickListener { parent, view, position, id ->
                     var usbDevice = deviceList[position]
-                    usbUtil.requestUsbPermission(
+                    usbUtil.requestUsbPermissionForCustomSystem(
                         context,
                         usbDevice,
                         object : UsbPermissionRequestListener {
                             override fun onRequestGranted() {
                                 var printer = JmPrinter.getUsbPrinter(
-                                    context,
+                                    PrinterDemoApp.context,//用application的context
                                     usbDevice.vendorId,
                                     usbDevice.productId
                                 )
-//
-//
-//                                var printer = JmPrinter.createPrinter(
-//                                    TransType.USB,
-//                                    "Jolimark[${usbDevice.vendorId},${usbDevice.productId}]"
-//                                ) as UsbPrinter
-//                                printer.device = usbDevice
-//                                printer.initContext(PrinterDemoApp.context)
                                 PrinterTableDao.INSTANCE.insert(PrinterBean(printer))
                                 setResult(RESULT_OK)
                                 finish()

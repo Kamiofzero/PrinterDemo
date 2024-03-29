@@ -1,8 +1,6 @@
 package com.jolimark.printerdemo.db.base;
 
 public abstract class DbBean {
-
-    public long id;
-    public String _uuid;
+    public String _uuid;//用于数据库中作为unicode
 
 }

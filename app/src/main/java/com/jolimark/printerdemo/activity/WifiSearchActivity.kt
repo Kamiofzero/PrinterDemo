@@ -32,8 +32,8 @@ class WifiSearchActivity : BaseActivity<ActivityWifiSearchBinding>() {
                         foundDevices.add(deviceInfo!!)
                         foundDevicesArrayAdapters!!.add(
                             """
-                    ${deviceInfo.ip}
-                    ${deviceInfo.port}
+                   ${deviceInfo.ip}
+                   ${deviceInfo.port}
                     """.trimIndent()
                         ) // 添加找到的蓝牙设备
                         foundDevicesArrayAdapters!!.notifyDataSetChanged()

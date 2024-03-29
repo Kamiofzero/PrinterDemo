@@ -12,7 +12,7 @@ public class UsbPrinter extends BasePrinter {
 
     @Override
     public String getDeviceInfo() {
-        return "[vid:" + usbBase.getDevice().getDeviceId() + ", pid:" + usbBase.getDevice().getProductId() + "]";
+        return "[vid:" + usbBase.getVid() + ", pid:" + usbBase.getPid() + "]";
     }
 
     @Override

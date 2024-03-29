@@ -1,5 +1,7 @@
 package com.jolimark.printer.trans.usb;
 
+import static android.app.PendingIntent.FLAG_IMMUTABLE;
+
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -83,7 +85,7 @@ public class UsbUtil {
             requestUsbDevice = usbDevice;
             usbPermissionRequestListener = listener;
             LogUtil.i(TAG, "has no permission of this device，request permission.");
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), 0);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), FLAG_IMMUTABLE);
             usbManager.requestPermission(usbDevice, pendingIntent);
             IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
             context.registerReceiver(mUsbReceiver, filter);
@@ -100,35 +102,32 @@ public class UsbUtil {
         final UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
         if (!usbManager.hasPermission(usbDevice)) {
             LogUtil.i(TAG, "has no permission of this device，request permission.");
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), 0);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), FLAG_IMMUTABLE);
             usbManager.requestPermission(usbDevice, pendingIntent);
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    int count = 30;
-                    while (true) {
-                        if (usbManager.hasPermission(usbDevice)) {
-                            if (listener != null) {
-                                listener.onRequestGranted();
-                            }
+            new Thread(() -> {
+                int count = 30;
+                while (true) {
+                    if (usbManager.hasPermission(usbDevice)) {
+                        if (listener != null) {
+                            listener.onRequestGranted();
+                        }
 
-                            LogUtil.i(TAG, "permission granted for device " + usbDevice);
-                            return;
+                        LogUtil.i(TAG, "permission granted for device " + usbDevice);
+                        return;
+                    }
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    count--;
+                    if (count <= 0) {
+                        if (listener != null) {
+                            listener.onRequestDenied();
                         }
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        count--;
-                        if (count <= 0) {
-                            if (listener != null) {
-                                listener.onRequestDenied();
-                            }
 
-                            LogUtil.i(TAG, "permission denied for device " + usbDevice);
-                            return;
-                        }
+                        LogUtil.i(TAG, "permission denied for device " + usbDevice);
+                        return;
                     }
                 }
             }).start();

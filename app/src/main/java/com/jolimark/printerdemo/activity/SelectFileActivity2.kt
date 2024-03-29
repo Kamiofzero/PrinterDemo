@@ -1,15 +1,11 @@
 package com.jolimark.printerdemo.activity
 
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.drawable.Drawable
-import android.net.Uri
-import android.os.Build
 import android.os.Environment
-import android.provider.Settings
 import android.view.View
-import androidx.annotation.RequiresApi
+import androidx.documentfile.provider.DocumentFile
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jolimark.printer.util.LogUtil
@@ -19,11 +15,10 @@ import com.jolimark.printerdemo.databinding.ActivitySelectFileBinding
 import com.jolimark.printerdemo.databinding.ItemDirectoryBinding
 import com.jolimark.printerdemo.databinding.ItemFileBinding
 import com.jolimark.printerdemo.databinding.PopupSortBinding
-import com.jolimark.printerdemo.util.DialogUtil
-import java.io.File
+import com.jolimark.printerdemo.util.LocalFileUtil
 
 
-class SelectFileActivity : BaseActivity<ActivitySelectFileBinding>() {
+class SelectFileActivity2 : BaseActivity<ActivitySelectFileBinding>() {
 
     private val SORT_NAME = 1
     private val SORT_CREATE = 2
@@ -139,109 +134,107 @@ class SelectFileActivity : BaseActivity<ActivitySelectFileBinding>() {
 
     }
 
-    // 请求文件访问权限的请求码，可以是任意整数值
-    private val REQUEST_MANAGE_FILES_ACCESS = 2;
+    override fun initData() {
+//        var file = Environment.getExternalStorageDirectory()
+//        selectFile(file)
 
-    //申请所有文件访问权限
-    @RequiresApi(Build.VERSION_CODES.R)
-    private fun requestPermission() {
-        //判断是否有管理外部存储的权限
-        if (!Environment.isExternalStorageManager()) {
-            var intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-            intent.data = Uri.parse("package:$packageName");
-            startActivityForResult(intent, REQUEST_MANAGE_FILES_ACCESS);
-        } else {
-            // 已有所有文件访问权限，可直接执行文件相关操作
-            showFiles()
-        }
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+        startActivityForResult(intent, 1)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_MANAGE_FILES_ACCESS) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                if (Environment.isExternalStorageManager()) {
-                    // TODO: 2023/11/22
-                    // 用户已经授予文件访问权限
-                    // 在这里执行创建文件夹和初始化数据库的操作
-                    LogUtil.i(TAG, "用户已经授予文件访问权限")
-                    showFiles()
-                } else {
-                    // TODO: 2023/11/22
-                    // 用户尚未授予文件访问权限
-                    // 可以在此处处理用户未授予权限的情况
-                    LogUtil.i(TAG, "用户尚未授予文件访问权限")
-                    DialogUtil.showDialog(
-                        context,
-                        "用户尚未授予文件访问权限，无法选择文件",
-                        object : DialogUtil.Callback {
-                            override fun onClick(dialog: DialogInterface) {
-                                finish()
-                            }
-
-                        })
-                }
+        if (resultCode == RESULT_OK && requestCode == 1) {
+            var uri = data?.data
+            LogUtil.i(TAG, "uri:$uri")
+            if (uri != null) {
+                DocumentFile.fromTreeUri(context, uri)?.let { tree(it) }
             }
-        }
-    }
-
-    private fun showFiles() {
-        var file = Environment.getExternalStorageDirectory()
-        selectFile(file)
-    }
-
-    override fun initData() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            requestPermission()
         } else {
-            showFiles()
+            finish()
         }
     }
 
-
-    private var directoryList = mutableListOf<File>()
-
-
-    private fun selectFile(file: File) {
-        LogUtil.i(TAG, "select -> ${file.name}")
-        if (file.isDirectory) {
-            LogUtil.i(TAG, "isDirectory")
-            var tlist = mutableListOf<File>()
-            var l = file.listFiles()
-            LogUtil.i(TAG, "listFiles:${l.size}")
-
-            file.listFiles()?.toMutableList()?.forEach {
+    private fun tree(documentFile: DocumentFile) {
+        if (documentFile.isDirectory) {
+            var tlist = mutableListOf<DocumentFile>()
+            documentFile.listFiles()?.forEach {
                 LogUtil.i(TAG, "name:${it.name}")
                 if (it.isDirectory) tlist.add(it)
                 else {
                     LogUtil.i(TAG, "name:${it.name}")
-                    if (it.name.run {
+                    if (it.name?.run {
                             endsWith(".prn") ||
                                     endsWith(".txt") ||
                                     endsWith(".png", true) ||
                                     endsWith(".jpg", true) ||
                                     endsWith(".jpeg", true)
-                        }) {
+                        } == true) {
                         tlist.add(it)
                     }
                 }
             }
             sort(tlist)
             fileAdapter.setList(tlist)
-            directoryList.add(file)
+            directoryList.add(documentFile)
             directoryAdapter.setList(directoryList)
             vb.rvDirectory.apply {
                 postDelayed({ smoothScrollToPosition(directoryAdapter.itemCount) }, 50)
             }
         } else {
             setResult(RESULT_OK, intent.apply {
-                putExtra("file", file.absolutePath)
+                var filePath = LocalFileUtil.getFilePath(context, documentFile.uri)
+                LogUtil.i(TAG, "select file:$filePath")
+                putExtra("file", filePath)
             })
             finish()
         }
     }
 
-    private fun selectDirectory(file: File, position: Int) {
+
+    private var directoryList = mutableListOf<DocumentFile>()
+
+
+//    private fun selectFile(file: File) {
+//        LogUtil.i(TAG, "select -> ${file.name}")
+//        if (file.isDirectory) {
+//            LogUtil.i(TAG, "isDirectory")
+//            var tlist = mutableListOf<DocumentFile>()
+//            var l = file.listFiles()
+//            LogUtil.i(TAG, "listFiles:${l.size}")
+//
+//            file.listFiles()?.toMutableList()?.forEach {
+//                LogUtil.i(TAG, "name:${it.name}")
+//                if (it.isDirectory) tlist.add(it)
+//                else {
+//                    LogUtil.i(TAG, "name:${it.name}")
+//                    if (it.name.run {
+//                            endsWith(".prn") ||
+//                                    endsWith(".txt") ||
+//                                    endsWith(".png", true) ||
+//                                    endsWith(".jpg", true) ||
+//                                    endsWith(".jpeg", true)
+//                        }) {
+//                        tlist.add(it)
+//                    }
+//                }
+//            }
+//            sort(tlist)
+//            fileAdapter.setList(tlist)
+//            directoryList.add(file)
+//            directoryAdapter.setList(directoryList)
+//            vb.rvDirectory.apply {
+//                postDelayed({ smoothScrollToPosition(directoryAdapter.itemCount) }, 50)
+//            }
+//        } else {
+//            setResult(RESULT_OK, intent.apply {
+//                putExtra("file", file.absolutePath)
+//            })
+//            finish()
+//        }
+//    }
+
+    private fun selectDirectory(file: DocumentFile, position: Int) {
         var tList = directoryList.toTypedArray().let {
             it.copyOfRange(0, position).toMutableList()
         }
@@ -251,16 +244,17 @@ class SelectFileActivity : BaseActivity<ActivitySelectFileBinding>() {
             directoryAdapter.setList(this)
         }
         //显示路径对应文件夹的内容
-        selectFile(file)
+        tree(file)
     }
 
 
-    private fun sort(list: MutableList<File>) {
+    private fun sort(list: MutableList<DocumentFile>) {
         if (sortType == SORT_NAME) {
             list.sortWith(Comparator { o1, o2 ->
                 if (o1.isDirectory && o2.isFile) return@Comparator -1
-                if (o1.isFile && o2.isDirectory) 1 else {
-                    o1.name.compareTo(o2.name, true).let {
+                if (o1.isFile && o2.isDirectory) 1
+                else {
+                    o1.name!!.compareTo(o2.name!!, true).let {
                         if (sortDirectionName == SORT_DOWN)
                             -it
                         else
@@ -282,8 +276,8 @@ class SelectFileActivity : BaseActivity<ActivitySelectFileBinding>() {
     }
 
     private inner class DirectoryAdapter(context: Context) :
-        BaseAdapter<ItemDirectoryBinding, File>(context) {
-        override fun onBind(holder: VpHolder, list: List<File>, position: Int) {
+        BaseAdapter<ItemDirectoryBinding, DocumentFile>(context) {
+        override fun onBind(holder: VpHolder, list: List<DocumentFile>, position: Int) {
             var rootName = Environment.getExternalStorageDirectory().name
             if (list[position].name == rootName) {
                 holder.vb.tvDirectory.text = context.getString(R.string.rootDirectory)
@@ -298,7 +292,7 @@ class SelectFileActivity : BaseActivity<ActivitySelectFileBinding>() {
                 else null
         }
 
-        override fun onItemClick(item: File, position: Int) {
+        override fun onItemClick(item: DocumentFile, position: Int) {
             super.onItemClick(item, position)
             selectDirectory(item, position)
         }
@@ -306,8 +300,8 @@ class SelectFileActivity : BaseActivity<ActivitySelectFileBinding>() {
 
 
     private inner class FileAdapter(context: Context) :
-        BaseAdapter<ItemFileBinding, File>(context) {
-        override fun onBind(holder: VpHolder, list: List<File>, position: Int) {
+        BaseAdapter<ItemFileBinding, DocumentFile>(context) {
+        override fun onBind(holder: VpHolder, list: List<DocumentFile>, position: Int) {
             holder.vb.tvFile.apply {
                 text = list[position].name
                 var file = list[position]
@@ -320,13 +314,13 @@ class SelectFileActivity : BaseActivity<ActivitySelectFileBinding>() {
                     null
                 ) else {
                     var drawable: Drawable? = null
-                    if (file.name.endsWith(".prn")) {
+                    if (file.name!!.endsWith(".prn")) {
                         drawable = getDrawable(R.drawable.print_prn)
-                    } else if (file.name.endsWith(".text")) {
+                    } else if (file.name!!.endsWith(".text")) {
                         drawable = getDrawable(R.drawable.print_text)
-                    } else if (file.name.endsWith(".png", true)
-                        || file.name.endsWith(".jpg", true)
-                        || file.name.endsWith(".jpeg", true)
+                    } else if (file.name!!.endsWith(".png", true)
+                        || file.name!!.endsWith(".jpg", true)
+                        || file.name!!.endsWith(".jpeg", true)
                     ) {
                         drawable = getDrawable(R.drawable.print_image)
                     }
@@ -342,9 +336,9 @@ class SelectFileActivity : BaseActivity<ActivitySelectFileBinding>() {
 
         }
 
-        override fun onItemClick(item: File, position: Int) {
+        override fun onItemClick(item: DocumentFile, position: Int) {
             super.onItemClick(item, position)
-            selectFile(item)
+            tree(item)
         }
     }
 
