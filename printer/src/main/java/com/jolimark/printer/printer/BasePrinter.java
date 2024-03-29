@@ -245,17 +245,26 @@ public abstract class BasePrinter {
     }
 
     public boolean print(byte[] bytes) {
-        return commBase.sendData(bytes);
+        if (!commBase.connect()) return false;
+        boolean ret = commBase.sendData(bytes);
+        commBase.disconnect();
+        return ret;
     }
 
     public boolean printText(String str) {
+        if (!commBase.connect()) return false;
         byte[] bytes = ByteArrayUtil.stringToByte(str);
-        return commBase.sendData(bytes);
+        boolean ret = commBase.sendData(bytes);
+        commBase.disconnect();
+        return ret;
     }
 
     public boolean printImg(Bitmap bitmap) {
+        if (!commBase.connect()) return false;
         byte[] bytes = ImageTransformer.imageToData(bitmap);
-        return commBase.sendData(bytes);
+        boolean ret = commBase.sendData(bytes);
+        commBase.disconnect();
+        return ret;
     }
 
     protected void callback(final Callback callback, int key) {

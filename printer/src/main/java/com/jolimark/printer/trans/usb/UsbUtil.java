@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 
+import com.jolimark.printer.util.CycleThread;
 import com.jolimark.printer.util.LogUtil;
 
 import java.util.ArrayList;
@@ -88,6 +89,7 @@ public class UsbUtil {
             PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), FLAG_IMMUTABLE);
             usbManager.requestPermission(usbDevice, pendingIntent);
             IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
+            mUsbReceiver.setDevice(usbDevice);
             context.registerReceiver(mUsbReceiver, filter);
         } else {
             LogUtil.i(TAG, "already has permission of this device.");
@@ -104,35 +106,35 @@ public class UsbUtil {
             LogUtil.i(TAG, "has no permission of this device，request permission.");
             PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), FLAG_IMMUTABLE);
             usbManager.requestPermission(usbDevice, pendingIntent);
-            new Thread(() -> {
-                int count = 30;
-                while (true) {
-                    if (usbManager.hasPermission(usbDevice)) {
-                        if (listener != null) {
-                            listener.onRequestGranted();
-                        }
+            new CycleThread() {
 
-                        LogUtil.i(TAG, "permission granted for device " + usbDevice);
-                        return;
-                    }
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    count--;
-                    if (count <= 0) {
+                @Override
+                public void doAfterCycle() {
+                    if (!usbManager.hasPermission(usbDevice)) {
                         if (listener != null) {
                             listener.onRequestDenied();
                         }
-
                         LogUtil.i(TAG, "permission denied for device " + usbDevice);
-                        return;
                     }
                 }
-            }).start();
 
+                @Override
+                public void doInCycle() {
+                    if (usbManager.hasPermission(usbDevice)) {
+                        LogUtil.i(TAG, "permission granted for device " + usbDevice);
+                        if (listener != null) {
+                            listener.onRequestGranted();
+                        }
+                        callBreak();
+                    }
+                }
 
+                @Override
+                public void doBeforeCycle() {
+                    setWaitMilliSeconds(500);
+                    setTimeoutMilliSeconds(5000);
+                }
+            }.start();
         } else {
             LogUtil.i(TAG, "already has permission of this device.");
             if (listener != null) {
@@ -141,7 +143,15 @@ public class UsbUtil {
         }
     }
 
-    private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
+    private final UsbPermissionReceiver mUsbReceiver = new UsbPermissionReceiver();
+
+    class UsbPermissionReceiver extends BroadcastReceiver {
+        private UsbDevice mDevice;
+
+        public void setDevice(UsbDevice device) {
+            this.mDevice = device;
+        }
+
         public void onReceive(Context context, Intent intent) {
             context.unregisterReceiver(this);
             String action = intent.getAction();
@@ -156,14 +166,25 @@ public class UsbUtil {
                 } else {
                     if (device != null && requestUsbDevice != null && device.getDeviceId() == requestUsbDevice.getDeviceId()) {
                         LogUtil.i(TAG, "permission denied for device " + device);
+                        if (mDevice != null) {//二次检查，是否真的权限拒绝
+                            UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
+                            if (usbManager.hasPermission(mDevice)) {
+                                if (usbPermissionRequestListener != null)
+                                    usbPermissionRequestListener.onRequestGranted();
+                                return;
+                            }
+                        }
                         if (usbPermissionRequestListener != null) {
                             usbPermissionRequestListener.onRequestDenied();
                         }
                     }
                 }
             }
+
         }
-    };
+    }
+
+    ;
 
 
     public interface UsbPermissionRequestListener {

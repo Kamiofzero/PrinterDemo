@@ -67,7 +67,9 @@ class UsbDevicesActivity : BaseActivity<ActivityUsbDevicesBinding>() {
                             }
 
                             override fun onRequestDenied() {
-                                toast(getString(R.string.tip_usbDenied))
+                                runOnUiThread {
+                                    toast(getString(R.string.tip_usbDenied))
+                                }
                             }
                         })
                 }

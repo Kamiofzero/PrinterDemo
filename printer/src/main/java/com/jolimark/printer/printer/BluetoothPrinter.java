@@ -28,14 +28,14 @@ public class BluetoothPrinter extends BasePrinter {
 
     @Override
     protected int initPackageSize() {
-        return 20;
-//        return 1024;
+//        return 20;
+        return 1024;
     }
 
     @Override
     protected int initSendDelay() {
-//        return 50;
-        return 0;
+        return 50;
+//        return 0;
     }
 
 
