@@ -30,16 +30,28 @@ object SettingUtil {
     val wifiPrinterPackageSize: Int
         get() = config.wifiPrinterPackageSize
 
+    val blePackageSize: Int
+        get() = config.blePrinterPackageSize
+
+    val bleSendDelay: Int
+        get() = config.blePrinterSendDelay
+
+    val bleMtu: Int
+        get() = config.bleMtu
+
     fun loadSetting(context: Context) {
         context.getSharedPreferences("config", Context.MODE_PRIVATE).apply {
             config.connectVerify = getBoolean("connectVerify", true)
             config.preventLost = getBoolean("preventLost", false)
             config.wifiPrinterPackageSize = getInt("wifiPrinterPackageSize", 1024)
             config.bluetoothPrinterPackageSize = getInt("bluetoothPrinterPackageSize", 1024)
-            config.usbPrinterPackageSize = getInt("usbPrinterPackageSize", 1024)
+            config.usbPrinterPackageSize = getInt("usbPrinterPackageSize", 3840)
             config.wifiPrinterSendDelay = getInt("wifiPrinterSendDelay", 100)
             config.bluetoothPrinterSendDelay = getInt("bluetoothPrinterSendDelay", 100)
             config.usbPrinterSendDelay = getInt("usbPrinterSendDelay", 0)
+            config.blePrinterPackageSize = getInt("blePrinterPackageSize", 20)
+            config.blePrinterSendDelay = getInt("blePrinterSendDelay", 0)
+            config.bleMtu = getInt("bleMtu", 20)
         }
     }
 
@@ -54,6 +66,9 @@ object SettingUtil {
             putInt("wifiPrinterSendDelay", config.wifiPrinterSendDelay)
             putInt("bluetoothPrinterSendDelay", config.bluetoothPrinterSendDelay)
             putInt("usbPrinterSendDelay", config.usbPrinterSendDelay)
+            putInt("blePrinterPackageSize", config.blePrinterPackageSize)
+            putInt("blePrinterSendDelay", config.blePrinterSendDelay)
+            putInt("bleMtu", config.bleMtu)
             commit()
         }
     }
@@ -96,5 +111,16 @@ object SettingUtil {
 
     }
 
+    fun setBlePrinterSendDelay(delayMs: Int) {
+        config.blePrinterSendDelay = delayMs
+    }
+
+    fun setBlePrinterPackageSize(size: Int) {
+        config.blePrinterPackageSize = size
+    }
+
+    fun setBlePrinterMTUSize(size: Int) {
+        config.bleMtu = size
+    }
 
 }

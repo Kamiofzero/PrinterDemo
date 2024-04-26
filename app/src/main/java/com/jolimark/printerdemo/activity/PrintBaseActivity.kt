@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.jolimark.printer.callback.Callback
 import com.jolimark.printer.printer.BasePrinter
+import com.jolimark.printer.printer.BlePrinter
 import com.jolimark.printer.printer.JmPrinter
 import com.jolimark.printer.trans.TransType
 import com.jolimark.printer.util.LogUtil
@@ -61,9 +62,11 @@ abstract class PrintBaseActivity<T : ViewBinding> : BaseActivity<T>() {
                     setPackageSize(SettingUtil.usbPrinterPackageSize)
                     setSendDelay(SettingUtil.usbPrinterSendDelay)
                 }
+
                 TransType.BLE -> {
-                    setPackageSize(SettingUtil.bluetoothPrinterPackageSize)
-                    setSendDelay(SettingUtil.bluetoothPrinterSendDelay)
+                    setPackageSize(SettingUtil.blePackageSize)
+                    setSendDelay(SettingUtil.bleSendDelay)
+                    (printer as BlePrinter).setMtu(SettingUtil.bleMtu)
                 }
             }
         }

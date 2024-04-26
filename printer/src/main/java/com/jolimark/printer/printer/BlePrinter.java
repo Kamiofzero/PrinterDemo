@@ -42,4 +42,8 @@ public class BlePrinter extends BasePrinter {
     protected int initSendDelay() {
         return 0;
     }
+
+    public void setMtu(int bleMtu) {
+        bleBase.setMtu(bleMtu);
+    }
 }

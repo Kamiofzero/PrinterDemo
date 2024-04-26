@@ -97,5 +97,6 @@
     <string name="create">创建时间</string>
     <string name="bleDevices">Ble设备</string>
     <string name="ble">Ble</string>
+    <string name="mtu">MTU大小</string>
 
 </resources>

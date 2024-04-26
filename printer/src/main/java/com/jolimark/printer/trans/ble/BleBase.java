@@ -43,6 +43,8 @@ public class BleBase extends TransBase {
 
     private int connectRet;
 
+    private int bleMtu = 20;
+
 
     public void setContext(Context context) {
         this.context = context;
@@ -133,8 +135,8 @@ public class BleBase extends TransBase {
         }
         LogUtil.i(TAG, "connect finish");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            boolean ret = bluetoothGatt.requestMtu(256);
-            LogUtil.i(TAG, "requestMtu :" + ret);
+            boolean ret = bluetoothGatt.requestMtu(bleMtu);
+            LogUtil.i(TAG, "requestMtu " + bleMtu + " :" + ret);
             synchronized (lock) {
                 try {
                     lock.wait();
@@ -155,6 +157,10 @@ public class BleBase extends TransBase {
      * 连接超时计时器
      */
     private Timer timeoutTimer = new Timer();
+
+    public void setMtu(int bleMtu) {
+        this.bleMtu = bleMtu;
+    }
 
     private class ConnectTimeoutTask extends TimerTask {
 
@@ -179,7 +185,7 @@ public class BleBase extends TransBase {
         public void onMtuChanged(BluetoothGatt gatt, int mtu, int status) {
             super.onMtuChanged(gatt, mtu, status);
             LogUtil.i(TAG, "onMtuChanged-> status:" + status + " , mtu: " + mtu);
-            if(status==BluetoothGatt.GATT_SUCCESS){
+            if (status == BluetoothGatt.GATT_SUCCESS) {
                 LogUtil.i(TAG, "requestMtu success");
             }
             synchronized (lock) {
