@@ -26,6 +26,11 @@ class DeviceAddActivity : BaseActivity<ActivityDeviceAddBinding>() {
                 launchActivityForResult(UsbDevicesActivity::class.java, 3)
 
             }
+
+            R.id.btn_ble -> {
+                launchActivityForResult(BleDevicesActivity::class.java, 4)
+
+            }
         }
     }
 

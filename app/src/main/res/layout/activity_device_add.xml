@@ -58,4 +58,12 @@
         app:icon="@mipmap/usb"
         app:iconTint="@color/black" />
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_ble"
+        style="@style/TextButton"
+        android:layout_marginTop="5dp"
+        android:text="@string/ble"
+        app:icon="@mipmap/bluetooth"
+        app:iconTint="@color/black" />
+
 </LinearLayout>

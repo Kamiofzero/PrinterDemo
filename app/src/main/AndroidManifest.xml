@@ -10,8 +10,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!--android 11以上访问所有文件权限-->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- android 11以上访问所有文件权限 -->
     <uses-permission
         android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
@@ -27,6 +26,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PrinterDemo"
         tools:targetApi="31">
+        <activity
+            android:name=".activity.BleDevicesActivity"
+            android:exported="false" />
         <activity
             android:name=".activity.PrintPrnActivity"
             android:exported="false" />

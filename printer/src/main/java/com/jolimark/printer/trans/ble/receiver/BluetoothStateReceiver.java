@@ -5,8 +5,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.jolimark.ble.listener.BluetoothStateListener;
-import com.jolimark.ble.util.LogUtil;
+import com.jolimark.printer.trans.ble.listener.BluetoothStateListener;
+import com.jolimark.printer.util.LogUtil;
 
 
 public class BluetoothStateReceiver extends BroadcastReceiver {

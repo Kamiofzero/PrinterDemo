@@ -46,6 +46,25 @@ public final class MsgCode {
     //蓝牙接收失败
     public static final int ER_BT_RECEIVE = 204;
 
+    //蓝牙BLE地址空
+    public static final int ER_BLE_ADDRESS_NULL = 401;
+    //蓝牙BLE连接失败
+    public static final int ER_BLE_CONNECT_FAIL = 402;
+    //蓝牙BLE连接超时
+    public static final int ER_BLE_CONNECT_TIMEOUT = 403;
+
+    //蓝牙BLE找不到服务
+    public static final int ER_BLE_SERVICE_NOT_FOUND = 404;
+
+    //蓝牙BLE找不到特征值
+    public static final int ER_BLE_CHARACTERISTIC_NOT_FOUND = 405;
+
+    //蓝牙BLE发送失败
+    public static final int ER_BLE_SEND_FAIL = 406;
+    //蓝牙BLE接收失败
+    public static final int ER_BLE_RECEIVE = 407;
+
+
     //usb设备空
     public static final int ER_USB_DEVICE_null = 300;
     //usb设备未找到

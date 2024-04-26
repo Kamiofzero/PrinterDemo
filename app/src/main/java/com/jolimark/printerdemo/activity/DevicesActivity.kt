@@ -111,6 +111,7 @@ class DevicesActivity : BaseActivity<ActivityDevicesBinding>() {
                 TransType.WIFI -> "WiFi Printer"
                 TransType.BLUETOOTH -> "Bluetooth Printer"
                 TransType.USB -> "USB Printer"
+                TransType.BLE->"Ble Printer"
             }
             holder.vb.tvInfo.text = basePrinter.deviceInfo
         }

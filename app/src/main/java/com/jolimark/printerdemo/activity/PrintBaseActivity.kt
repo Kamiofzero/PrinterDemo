@@ -61,6 +61,10 @@ abstract class PrintBaseActivity<T : ViewBinding> : BaseActivity<T>() {
                     setPackageSize(SettingUtil.usbPrinterPackageSize)
                     setSendDelay(SettingUtil.usbPrinterSendDelay)
                 }
+                TransType.BLE -> {
+                    setPackageSize(SettingUtil.bluetoothPrinterPackageSize)
+                    setSendDelay(SettingUtil.bluetoothPrinterSendDelay)
+                }
             }
         }
         onPrinterSelect(printer)
@@ -131,6 +135,7 @@ abstract class PrintBaseActivity<T : ViewBinding> : BaseActivity<T>() {
                 TransType.WIFI -> "WiFi Printer"
                 TransType.BLUETOOTH -> "Bluetooth Printer"
                 TransType.USB -> "USB Printer"
+                TransType.BLE -> "Ble Printer"
             }
             holder.vb.tvInfo.text = printer.deviceInfo
             holder.vb.root.setOnClickListener {

@@ -1,6 +1,7 @@
 package com.jolimark.printerdemo.db
 
 import com.jolimark.printer.printer.BasePrinter
+import com.jolimark.printer.printer.BlePrinter
 import com.jolimark.printer.printer.BluetoothPrinter
 import com.jolimark.printer.printer.UsbPrinter
 import com.jolimark.printer.printer.WifiPrinter
@@ -36,6 +37,12 @@ class PrinterBean : DbBean {
                 var usbPrinter = basePrinter as UsbPrinter
                 info = "${usbPrinter.vid}/${usbPrinter.pid}"
             }
+
+            TransType.BLE -> {
+                type = "ble"
+                var blePrinter = basePrinter as BlePrinter
+                info = "${blePrinter.mac}/"
+            }
         }
         this.type = type
         this.info = info
@@ -59,6 +66,13 @@ class PrinterBean : DbBean {
                     PrinterDemoApp.context,
                     array?.get(0)!!.toInt(),
                     array?.get(1)!!.toInt()
+                )
+            }
+
+            "ble" -> {
+                printer = BlePrinter(
+                    PrinterDemoApp.context,
+                    array?.get(0)
                 )
             }
         }

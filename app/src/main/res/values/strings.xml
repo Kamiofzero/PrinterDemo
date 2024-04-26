@@ -95,5 +95,7 @@
     <string name="tip_storageReadPermissionDenied">读取内部存储器权限被禁止，无法正常选择文件</string>
     <string name="fileName">文件名称</string>
     <string name="create">创建时间</string>
+    <string name="bleDevices">Ble设备</string>
+    <string name="ble">Ble</string>
 
 </resources>

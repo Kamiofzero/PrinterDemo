@@ -1,6 +1,7 @@
 package com.jolimark.printer.printer;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -68,6 +69,18 @@ public class JmPrinter {
         return (UsbPrinter) basePrinter;
     }
 
+    public static BlePrinter getBlePrinter(Context context, String mac) {
+        if (TextUtils.isEmpty(mac)) {
+            return null;
+        }
+        String key = "ble/" + mac;
+        BasePrinter basePrinter = printerHashMap.get(key);
+        if (basePrinter == null) {
+            basePrinter = new BlePrinter(context, mac);
+            printerHashMap.put(key, basePrinter);
+        }
+        return (BlePrinter) basePrinter;
+    }
 
 
 //    public static <T> T getPrinter(String name) {
