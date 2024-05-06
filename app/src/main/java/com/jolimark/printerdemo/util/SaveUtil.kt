@@ -51,7 +51,7 @@ object SettingUtil {
             config.usbPrinterSendDelay = getInt("usbPrinterSendDelay", 0)
             config.blePrinterPackageSize = getInt("blePrinterPackageSize", 20)
             config.blePrinterSendDelay = getInt("blePrinterSendDelay", 0)
-            config.bleMtu = getInt("bleMtu", 20)
+            config.bleMtu = getInt("bleMtu", 23)
         }
     }
 

@@ -16,14 +16,31 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-
+    signingConfigs {
+        create("release") {
+            storeFile = file("../ljb.keystore")
+            storePassword = "23332333"
+            keyAlias = "ljb"
+            keyPassword = "23332333"
+        }
+        getByName("debug") {
+            storeFile = file("../ljb.keystore")
+            storePassword = "23332333"
+            keyAlias = "ljb"
+            keyPassword = "23332333"
+        }
+    }
     buildTypes {
         release {
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        debug{
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
