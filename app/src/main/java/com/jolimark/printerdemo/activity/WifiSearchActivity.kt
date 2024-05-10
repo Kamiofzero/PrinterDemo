@@ -5,7 +5,7 @@ import android.widget.ArrayAdapter
 import com.jolimark.printer.printer.JmPrinter
 import com.jolimark.printer.trans.wifi.WifiUtil
 import com.jolimark.printer.trans.wifi.search.DeviceInfo
-import com.jolimark.printer.trans.wifi.search.SearchDeviceCallback
+import com.jolimark.printer.trans.wifi.search.SearchCallback
 import com.jolimark.printerdemo.R
 import com.jolimark.printerdemo.databinding.ActivityWifiSearchBinding
 import com.jolimark.printerdemo.db.PrinterBean
@@ -27,20 +27,27 @@ class WifiSearchActivity : BaseActivity<ActivityWifiSearchBinding>() {
                 foundDevices.clear()
                 foundDevicesArrayAdapters.clear()
                 wifiUtil.stopSearchPrinter()
-                wifiUtil.searchPrinter(object : SearchDeviceCallback {
-                    override fun deviceFound(deviceInfo: DeviceInfo?) {
-                        foundDevices.add(deviceInfo!!)
+                wifiUtil.searchPrinter(object : SearchCallback {
+
+                    override fun onDeviceFound(info: DeviceInfo?) {
+                        foundDevices.add(info!!)
                         foundDevicesArrayAdapters!!.add(
                             """
-                   ${deviceInfo.ip}
-                   ${deviceInfo.port}
+                   ${info.ip}
+                   ${info.port}
                     """.trimIndent()
                         ) // 添加找到的蓝牙设备
                         foundDevicesArrayAdapters!!.notifyDataSetChanged()
                     }
 
-                    override fun searchFinish() {
+                    override fun onSearchEnd() {
                         vb.pb.visibility = View.VISIBLE
+                    }
+
+                    override fun onSearchFail(msg: String?) {
+                        if (msg != null) {
+                            toast(msg)
+                        }
                     }
                 })
             }

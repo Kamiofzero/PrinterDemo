@@ -1,6 +1,7 @@
 package com.jolimark.printer.trans.wifi.search;
 
 
+
 import static com.jolimark.printer.common.MsgCode.ER_WIFI_UDP_SOCKET_CREATE_FAIL;
 
 import com.jolimark.printer.common.MsgCode;
@@ -25,7 +26,7 @@ public class SearchDeviceThread1 extends Thread {
     private final String TAG = "SearchDeviceThread1";
 
 
-    private Callback callback;
+    private SearchCallback callback;
     private static final int LOCAL_PORT = 10002; // 本地端口号
     private static final String BROADCAST_IP = "255.255.255.255";// 广播地址
     private static final int BROADCAST_PORT = 10002; // UDP广播的端口号
@@ -40,7 +41,7 @@ public class SearchDeviceThread1 extends Thread {
 
     private ReentrantLock lock_cancel = new ReentrantLock();
 
-    public SearchDeviceThread1(Callback callback) {
+    public SearchDeviceThread1(SearchCallback callback) {
         this.callback = callback;
     }
 
@@ -67,6 +68,7 @@ public class SearchDeviceThread1 extends Thread {
         if (udpSocket == null) {
             LogUtil.i(TAG, "udp socket create fail.");
             MsgCode.setLastErrorCode(ER_WIFI_UDP_SOCKET_CREATE_FAIL);
+            callback.onSearchFail(MsgCode.getLastErrorMsg());
             return;
         }
 
@@ -85,7 +87,7 @@ public class SearchDeviceThread1 extends Thread {
         while (!flag_timeout && !flag_cancel) {
             sendBroadcast();
             try {
-                Thread.sleep(1000);
+                Thread.sleep(300);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -196,9 +198,4 @@ public class SearchDeviceThread1 extends Thread {
     }
 
 
-    public interface Callback {
-        void onDeviceFound(DeviceInfo info);
-
-        void onSearchEnd();
-    }
 }

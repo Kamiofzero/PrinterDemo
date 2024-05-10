@@ -39,7 +39,7 @@ public class BluetoothUtil {
                 return;
             }
         }
-        LogUtil.i(TAG,"registerBluetoothReceiver");
+        LogUtil.i(TAG, "registerBluetoothReceiver");
         bluetoothReceiver = new BluetoothReceiver();
         IntentFilter filter = new IntentFilter();
         filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
@@ -66,7 +66,7 @@ public class BluetoothUtil {
 
 
     public void setBluetoothStateListener(BluetoothStateListener bluetoothStateListener) {
-        if (bluetoothReceiver!= null)
+        if (bluetoothReceiver != null)
             bluetoothReceiver.setBluetoothStateListener(bluetoothStateListener);
     }
 
@@ -100,7 +100,8 @@ public class BluetoothUtil {
      * 停止搜索蓝牙设备
      */
     public void stopDiscoveryBTDevice() {
-        bluetoothAdapter.cancelDiscovery();
+        if (bluetoothAdapter.isDiscovering())
+            bluetoothAdapter.cancelDiscovery();
     }
 
     /**

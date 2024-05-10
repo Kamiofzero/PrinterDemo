@@ -12,11 +12,14 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 
+import com.jolimark.printer.common.MsgCode;
 import com.jolimark.printer.trans.wifi.search.DeviceInfo;
-import com.jolimark.printer.trans.wifi.search.SearchDeviceCallback;
+import com.jolimark.printer.trans.wifi.search.SearchCallback;
 import com.jolimark.printer.trans.wifi.search.SearchDeviceThread;
 import com.jolimark.printer.trans.wifi.search.SearchDeviceThread1;
+
 
 @SuppressLint("MissingPermission")
 public class WifiUtil {
@@ -31,10 +34,13 @@ public class WifiUtil {
 
     private final int HANDLER_DEVICE_FOUND = 1;
     private final int HANDLER_SEARCH_END = 2;
-    private SearchDeviceCallback searchDeviceCallback;
+    private SearchCallback searchDeviceCallback;
 
     private boolean flag_searchEnd;
     private boolean flag_searchEnd1;
+
+    private boolean flag_searchFail;
+    private boolean flag_searchFail1;
 
     public WifiUtil() {
         mainHandler = new MainHandler();
@@ -93,7 +99,7 @@ public class WifiUtil {
     }
 
 
-    public void searchPrinter(final SearchDeviceCallback callback) {
+    public void searchPrinter(final SearchCallback callback) {
         synchronized (WifiUtil.class) {
             if (flag_searching) {
                 return;
@@ -112,6 +118,10 @@ public class WifiUtil {
     }
 
     public void stopSearchPrinter() {
+        synchronized (WifiUtil.this) {
+            if (!flag_searching)
+                return;
+        }
         if (searchDeviceThread != null) {
             searchDeviceThread.stopSearching();
             searchDeviceThread = null;
@@ -123,7 +133,7 @@ public class WifiUtil {
     }
 
 
-    private SearchDeviceThread.Callback searchCallback = new SearchDeviceThread.Callback() {
+    private SearchCallback searchCallback = new SearchCallback() {
         @Override
         public void onDeviceFound(DeviceInfo info) {
             mainHandler.obtainMessage(HANDLER_DEVICE_FOUND, info).sendToTarget();
@@ -134,8 +144,15 @@ public class WifiUtil {
             flag_searchEnd = true;
             checkSearchFinish();
         }
+
+        @Override
+        public void onSearchFail(String msg) {
+            flag_searchEnd = true;
+            flag_searchFail = true;
+            checkSearchFinish();
+        }
     };
-    private SearchDeviceThread1.Callback searchCallback1 = new SearchDeviceThread1.Callback() {
+    private SearchCallback searchCallback1 = new SearchCallback() {
         @Override
         public void onDeviceFound(DeviceInfo info) {
             mainHandler.obtainMessage(HANDLER_DEVICE_FOUND, info).sendToTarget();
@@ -146,13 +163,25 @@ public class WifiUtil {
             flag_searchEnd1 = true;
             checkSearchFinish();
         }
+
+        @Override
+        public void onSearchFail(String msg) {
+            flag_searchEnd1 = true;
+            flag_searchFail1 = true;
+            checkSearchFinish();
+//            mainHandler.obtainMessage(HANDLER_SEARCH_FAIL, msg).sendToTarget();
+        }
     };
 
 
     private void checkSearchFinish() {
         if (flag_searchEnd && flag_searchEnd1) {
-            mainHandler.sendEmptyMessage(HANDLER_SEARCH_END);
-
+            String msg = null;
+            if (flag_searchFail || flag_searchFail1) {
+                msg = MsgCode.getLastErrorMsg();
+                MsgCode.clear();
+            }
+            mainHandler.obtainMessage(HANDLER_SEARCH_END, msg).sendToTarget();
             flag_searching = false;
         }
     }
@@ -171,11 +200,16 @@ public class WifiUtil {
                 case HANDLER_DEVICE_FOUND:
                     DeviceInfo deviceInfo = (DeviceInfo) msg.obj;
                     if (searchDeviceCallback != null)
-                        searchDeviceCallback.deviceFound(deviceInfo);
+                        searchDeviceCallback.onDeviceFound(deviceInfo);
                     break;
                 case HANDLER_SEARCH_END: {
-                    if (searchDeviceCallback != null)
-                        searchDeviceCallback.searchFinish();
+                    if (searchDeviceCallback != null) {
+                        String errorMsg = (String) msg.obj;
+                        if (TextUtils.isEmpty(errorMsg))
+                            searchDeviceCallback.onSearchEnd();
+                        else
+                            searchDeviceCallback.onSearchFail(errorMsg);
+                    }
                     break;
                 }
             }
@@ -254,184 +288,4 @@ public class WifiUtil {
         }
         return networkType;
     }
-
-
-//    public void enableWiFi(Context context) {
-//        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-//        if (!wifiManager.isWifiEnabled())
-//            wifiManager.setWifiEnabled(true);
-//    }
-
-//    public List getAPList(Context context) {
-//        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-//        return wifiManager.getScanResults();
-//    }
-//
-//    public void setApConnectStateListener(APConnectStateListener apConnectStateListener) {
-//        if (wifiReceiver == null)
-//            throw new WifiReceiverNotRegisterException();
-//        wifiReceiver.setApConnectStateListener(apConnectStateListener);
-//    }
-//
-//    public void setWifiStateListener(WifiStateListener wifiStateListener) {
-//        if (wifiReceiver == null)
-//            throw new WifiReceiverNotRegisterException();
-//        wifiReceiver.setWifiStateListener(wifiStateListener);
-//    }
-//
-//    private WifiReceiver wifiReceiver;
-//
-//    public void registerAPConnectReceiver(Context context) {
-//        if (wifiReceiver != null) {
-//            return;
-//        }
-//        wifiReceiver = new WifiReceiver();
-//        IntentFilter intentFilter = new IntentFilter();
-//        intentFilter.addAction(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION);
-//        intentFilter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
-//        intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
-//        context.registerReceiver(wifiReceiver, intentFilter);
-//    }
-//
-//    public void unregisterWifiReceiver(Context context) {
-//        context.unregisterReceiver(wifiReceiver);
-//        wifiReceiver = null;
-//    }
-
-//    /**
-//     * 判断热点是否需要密码
-//     *
-//     * @param scanResult
-//     * @return
-//     */
-//    public boolean isNeedPwd(ScanResult scanResult) {
-//        if (scanResult == null)
-//            return false;
-//        String capabilities = scanResult.capabilities.trim();
-//        if (capabilities.contains("WPA") || capabilities.contains("wpa")) {
-//            LogUtil.i("AP ssid: " + scanResult.SSID + "need password.");
-//            return true;
-//        } else if (capabilities.contains("WEP") || capabilities.contains("wep")) {
-//            LogUtil.i("AP ssid: " + scanResult.SSID + "need password.");
-//            return true;
-//        }
-//        LogUtil.i("AP ssid: " + scanResult.SSID + "need no password.");
-//        return false;
-//    }
-//
-//    /**
-//     * 加密类型枚举
-//     */
-//    public enum EncryptionType {
-//        None, Wep, Wap
-//    }
-//
-//
-//    /**
-//     * 连接指定wifi热点
-//     *
-//     * @param ssid     热点名字
-//     * @param password 热点密码
-//     * @param type     热点加密类型
-//     */
-//    public static boolean connectHotSpot(Context context, String ssid, String password, EncryptionType type) {
-//        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-//        //初始化WifiConfiguration
-//        WifiConfiguration config = new WifiConfiguration();
-//        config.allowedAuthAlgorithms.clear();
-//        config.allowedGroupCiphers.clear();
-//        config.allowedKeyManagement.clear();
-//        config.allowedPairwiseCiphers.clear();
-//        config.allowedProtocols.clear();
-//
-//        //指定对应的SSID
-//        config.SSID = "\"" + ssid + "\"";
-//
-//        //如果之前有类似的配置
-//        List<WifiConfiguration> configs = wifiManager.getConfiguredNetworks();
-//        if (configs != null) {
-//            WifiConfiguration tempConfig = null;
-//            for (WifiConfiguration tconfig : configs) {
-//                if (tconfig.SSID.equals("\"" + ssid + "\"")) {
-//                    tempConfig = tconfig;
-//                }
-//            }
-//            if (tempConfig != null) {
-//                //则清除旧有配置
-//                wifiManager.removeNetwork(tempConfig.networkId);
-//            }
-//        }
-//
-//        //不需要密码的场景
-//        if (type == None) {
-//            config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
-//            //以WEP加密的场景
-//        } else if (type == Wep) {
-//            config.hiddenSSID = true;
-//            config.wepKeys[0] = "\"" + password + "\"";
-//            config.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
-//            config.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.SHARED);
-//            config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
-//            config.wepTxKeyIndex = 0;
-//            //以WPA加密的场景，自己测试时，发现热点以WPA2建立时，同样可以用这种配置连接
-//        } else if (type == Wap) {
-//            config.preSharedKey = "\"" + password + "\"";
-//            config.hiddenSSID = true;
-//            config.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
-//            config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
-//            config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
-//            config.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
-//            config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
-//            config.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
-//            config.status = WifiConfiguration.Status.ENABLED;
-//        }
-//
-//        //构建目标热点配置完成，加入WiFiManager，等同于在android手机上保存了热点的配置信息
-//        //保存热点配置，将为该热点分配networkId
-//        int networkId = wifiManager.addNetwork(config);
-//        //通过networkId连接目标热点
-//        return wifiManager.enableNetwork(networkId, true);
-//    }
-
-//    public void closeAP(Context context) {
-//        try {
-//            WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-//            Method method = wifiManager.getClass().getMethod("getWifiApConfiguration");
-//            method.setAccessible(true);
-//            WifiConfiguration config = (WifiConfiguration) method.invoke(wifiManager);
-//            Method method2 = wifiManager.getClass().getMethod("setWifiApEnabled", WifiConfiguration.class, boolean.class);
-//            method2.invoke(wifiManager, config, false);
-//        } catch (NoSuchMethodException e) {
-//            e.printStackTrace();
-//        } catch (IllegalArgumentException e) {
-//            e.printStackTrace();
-//        } catch (IllegalAccessException e) {
-//            e.printStackTrace();
-//        } catch (InvocationTargetException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
-//    public void closeAP(Context context) {
-//        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-//        Method method = null;
-//        try {
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//                method = wifiManager.getClass().getDeclaredMethod("stopSoftAp");
-//                method.invoke(wifiManager);
-//
-//            } else {
-//                method = wifiManager.getClass().getMethod("setWifiApEnabled", WifiConfiguration.class, boolean.class);
-//                method.invoke(wifiManager, null, false);
-//            }
-//        } catch (NoSuchMethodException e) {
-//            e.printStackTrace();
-//        } catch (IllegalAccessException e) {
-//            e.printStackTrace();
-//        } catch (InvocationTargetException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
-
 }
