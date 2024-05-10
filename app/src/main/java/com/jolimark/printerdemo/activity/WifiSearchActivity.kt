@@ -24,6 +24,7 @@ class WifiSearchActivity : BaseActivity<ActivityWifiSearchBinding>() {
             }
 
             R.id.btn_search -> {
+                vb.pb.visibility = View.VISIBLE
                 foundDevices.clear()
                 foundDevicesArrayAdapters.clear()
                 wifiUtil.stopSearchPrinter()
@@ -41,7 +42,7 @@ class WifiSearchActivity : BaseActivity<ActivityWifiSearchBinding>() {
                     }
 
                     override fun onSearchEnd() {
-                        vb.pb.visibility = View.VISIBLE
+                        vb.pb.visibility = View.INVISIBLE
                     }
 
                     override fun onSearchFail(msg: String?) {
