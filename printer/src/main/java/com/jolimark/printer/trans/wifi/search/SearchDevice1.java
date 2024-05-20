@@ -1,7 +1,6 @@
 package com.jolimark.printer.trans.wifi.search;
 
 
-
 import static com.jolimark.printer.common.MsgCode.ER_WIFI_UDP_SOCKET_CREATE_FAIL;
 
 import com.jolimark.printer.common.MsgCode;
@@ -21,9 +20,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class SearchDeviceThread1 extends Thread {
 
-    private final String TAG = "SearchDeviceThread1";
+public class SearchDevice1 implements Runnable {
+
+    private final String TAG = "SearchDevice1";
 
 
     private SearchCallback callback;
@@ -35,25 +35,33 @@ public class SearchDeviceThread1 extends Thread {
     private int timeout = 10000;// 最大搜索时间/毫秒
 
 
-    private boolean flag_cancel;
+    private boolean loop = true;
+
     private boolean flag_timeout;
     private Timer timer;
 
     private ReentrantLock lock_cancel = new ReentrantLock();
 
-    public SearchDeviceThread1(SearchCallback callback) {
+    public SearchDevice1(SearchCallback callback) {
         this.callback = callback;
     }
 
     public void stopSearching() {
         lock_cancel.lock();
-        flag_cancel = true;
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
+        try {
+            loop = false;
+            Thread.currentThread().interrupt();
+            callback = null;
+            if (timer != null) {
+                timer.cancel();
+                timer = null;
+            }
+            if (udpSocket != null)
+                udpSocket.close();
+            LogUtil.i(TAG, "cancel searching.");
+        } finally {
+            lock_cancel.unlock();
         }
-        LogUtil.i(TAG, "cancel searching.");
-        lock_cancel.unlock();
     }
 
 
@@ -64,14 +72,12 @@ public class SearchDeviceThread1 extends Thread {
             udpSocket.setSoTimeout(1000);
         } catch (SocketException e) {
             e.printStackTrace();
-        }
-        if (udpSocket == null) {
+            LogUtil.i(TAG, e.getMessage());
             LogUtil.i(TAG, "udp socket create fail.");
             MsgCode.setLastErrorCode(ER_WIFI_UDP_SOCKET_CREATE_FAIL);
-            callback.onSearchFail(MsgCode.getLastErrorMsg());
+            callback(-1, MsgCode.getLastErrorMsg());
             return;
         }
-
         LogUtil.i(TAG, "udp socket create success.");
         // 搜索超时
         timer = new Timer();
@@ -82,32 +88,46 @@ public class SearchDeviceThread1 extends Thread {
             }
         }, timeout);
 
-        flag_cancel = false;
         LogUtil.i(TAG, "start searching...");
-        while (!flag_timeout && !flag_cancel) {
+        while (!flag_timeout && loop) {
             sendBroadcast();
-            try {
-                Thread.sleep(300);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            if (!delay()) break;
             receiveBroadcast();
         }
         closeSocket();
         LogUtil.i(TAG, "searching finish.");
-        callback.onSearchEnd();
+        callback(1, null);
     }
 
+    private boolean delay() {
+        lock_cancel.lock();
+        try {
+            if (loop)
+                Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            LogUtil.i(TAG, e.getMessage());
+            return false;
+        } finally {
+            lock_cancel.unlock();
+        }
+        return true;
+    }
 
     private void closeSocket() {
-        if (udpSocket != null && !udpSocket.isClosed()) {
-            try {
-                udpSocket.close();
-                LogUtil.i(TAG, "udp socket close.");
-            } catch (Exception e) {
-                e.printStackTrace();
+        lock_cancel.lock();
+        try {
+            if (udpSocket != null && !udpSocket.isClosed()) {
+                try {
+                    udpSocket.close();
+                    LogUtil.i(TAG, "udp socket close.");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                udpSocket = null;
             }
-            udpSocket = null;
+        } finally {
+            lock_cancel.unlock();
         }
     }
 
@@ -124,7 +144,7 @@ public class SearchDeviceThread1 extends Thread {
 
             //发送广播
             udpSocket.send(dataPacket);
-            LogUtil.i(TAG, "searchType1 send package:" + ByteArrayUtil.toHex(bytes, bytes.length));
+//            LogUtil.i(TAG, "searchType1 send package:" + ByteArrayUtil.toHex(bytes, bytes.length));
 
         } catch (UnknownHostException e) {
             e.printStackTrace();
@@ -133,10 +153,17 @@ public class SearchDeviceThread1 extends Thread {
         }
     }
 
-
     private void receiveBroadcast() {
+        do {
+            if (!receivePacket()) {
+                break;
+            }
+        } while (true);
+    }
+
+    private boolean receivePacket() {
         if (udpSocket == null)
-            return;
+            return false;
 
         // UDP接收数据缓存
         byte[] buff = new byte[256];
@@ -146,7 +173,7 @@ public class SearchDeviceThread1 extends Thread {
 
             //接收广播
             udpSocket.receive(recDataPacket);
-            LogUtil.i(TAG, "receive package");
+//            LogUtil.i(TAG, "receive package");
             if ((buff[0] & 0xff) == 0xBC && buff[1] == 0x01) {
 
                 int len1 = (buff[5] & 0xff) << 24;
@@ -154,10 +181,10 @@ public class SearchDeviceThread1 extends Thread {
                 int len3 = (buff[3] & 0xff) << 8;
                 int len4 = (buff[2] & 0xff);
                 int len = len1 + len2 + len3 + len4;
-                LogUtil.i(TAG, "len: " + len);
+//                LogUtil.i(TAG, "len: " + len);
                 if (len <= buff.length - 6) {
                     String jsonString = new String(buff, 6, len);
-                    LogUtil.i(TAG, "jsonString: " + jsonString);
+//                    LogUtil.i(TAG, "jsonString: " + jsonString);
 
 
                     try {
@@ -172,21 +199,16 @@ public class SearchDeviceThread1 extends Thread {
                             deviceInfo.type = printerModel;
                             deviceInfo.mac = mac;
                             deviceInfo.port = "19100";
-                            LogUtil.i(TAG, "find printer " + deviceInfo.toString());
+                            LogUtil.i(TAG, "find printer " + deviceInfo);
 
-                            lock_cancel.lock();
-                            if (!flag_cancel) {
-                                if (callback != null)
-                                    callback.onDeviceFound(deviceInfo);
-                            }
-                            lock_cancel.unlock();
+                            callback(0, deviceInfo);
+                            return true;
                         } else {
-                            LogUtil.i(TAG, "package drop");
+//                            LogUtil.i(TAG, "package drop");
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
 
                 }
             }
@@ -195,7 +217,29 @@ public class SearchDeviceThread1 extends Thread {
             e.printStackTrace();
             LogUtil.i(TAG, "udp receive error:" + e.getMessage());
         }
+        return false;
     }
 
-
+    private void callback(int what, Object obj) {
+        lock_cancel.lock();
+        try {
+            if (callback != null)
+                switch (what) {
+                    case -1: {
+                        callback.onSearchFail((String) obj);
+                        break;
+                    }
+                    case 0: {
+                        callback.onDeviceFound((DeviceInfo) obj);
+                        break;
+                    }
+                    case 1: {
+                        callback.onSearchEnd();
+                        break;
+                    }
+                }
+        } finally {
+            lock_cancel.unlock();
+        }
+    }
 }

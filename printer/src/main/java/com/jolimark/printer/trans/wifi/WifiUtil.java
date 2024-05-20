@@ -17,8 +17,11 @@ import android.text.TextUtils;
 import com.jolimark.printer.common.MsgCode;
 import com.jolimark.printer.trans.wifi.search.DeviceInfo;
 import com.jolimark.printer.trans.wifi.search.SearchCallback;
-import com.jolimark.printer.trans.wifi.search.SearchDeviceThread;
-import com.jolimark.printer.trans.wifi.search.SearchDeviceThread1;
+import com.jolimark.printer.trans.wifi.search.SearchDevice;
+import com.jolimark.printer.trans.wifi.search.SearchDevice1;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 @SuppressLint("MissingPermission")
@@ -26,8 +29,8 @@ public class WifiUtil {
 
     private final String TAG = getClass().getSimpleName();
 
-    private SearchDeviceThread searchDeviceThread;
-    private SearchDeviceThread1 searchDeviceThread1;
+    private SearchDevice searchDevice;
+    private SearchDevice1 searchDevice1;
 
     private boolean flag_searching;
     private MainHandler mainHandler;
@@ -42,8 +45,13 @@ public class WifiUtil {
     private boolean flag_searchFail;
     private boolean flag_searchFail1;
 
+    private ExecutorService executorService;
+    private ExecutorService executorService1;
+
     public WifiUtil() {
         mainHandler = new MainHandler();
+        executorService = Executors.newSingleThreadExecutor();
+        executorService1 = Executors.newSingleThreadExecutor();
     }
 
     public void registerReceiver(Context context) {
@@ -111,24 +119,25 @@ public class WifiUtil {
         flag_searchEnd = false;
         flag_searchEnd1 = false;
 
-        searchDeviceThread = new SearchDeviceThread(this.searchCallback);
-        searchDeviceThread.start();
-        searchDeviceThread1 = new SearchDeviceThread1(this.searchCallback1);
-        searchDeviceThread1.start();
+        searchDevice = new SearchDevice(this.searchCallback);
+        executorService.execute(searchDevice);
+        searchDevice1 = new SearchDevice1(this.searchCallback1);
+        executorService1.execute(searchDevice1);
     }
 
     public void stopSearchPrinter() {
         synchronized (WifiUtil.this) {
             if (!flag_searching)
                 return;
+            flag_searching = false;
         }
-        if (searchDeviceThread != null) {
-            searchDeviceThread.stopSearching();
-            searchDeviceThread = null;
+        if (searchDevice != null) {
+            searchDevice.stopSearching();
+            searchDevice = null;
         }
-        if (searchDeviceThread1 != null) {
-            searchDeviceThread1.stopSearching();
-            searchDeviceThread1 = null;
+        if (searchDevice1 != null) {
+            searchDevice1.stopSearching();
+            searchDevice1 = null;
         }
     }
 
@@ -176,6 +185,7 @@ public class WifiUtil {
 
     private void checkSearchFinish() {
         if (flag_searchEnd && flag_searchEnd1) {
+            flag_searching = false;
             String msg = null;
             if (flag_searchFail || flag_searchFail1) {
                 msg = MsgCode.getLastErrorMsg();

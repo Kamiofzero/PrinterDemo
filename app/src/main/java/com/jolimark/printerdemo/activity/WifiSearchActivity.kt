@@ -31,14 +31,16 @@ class WifiSearchActivity : BaseActivity<ActivityWifiSearchBinding>() {
                 wifiUtil.searchPrinter(object : SearchCallback {
 
                     override fun onDeviceFound(info: DeviceInfo?) {
-                        foundDevices.add(info!!)
-                        foundDevicesArrayAdapters!!.add(
-                            """
+                        if (!foundDevices.contains(info)) {
+                            foundDevices.add(info!!)
+                            foundDevicesArrayAdapters!!.add(
+                                """
                    ${info.ip}
                    ${info.port}
                     """.trimIndent()
-                        ) // 添加找到的蓝牙设备
-                        foundDevicesArrayAdapters!!.notifyDataSetChanged()
+                            ) // 添加找到的蓝牙设备
+                            foundDevicesArrayAdapters!!.notifyDataSetChanged()
+                        }
                     }
 
                     override fun onSearchEnd() {
