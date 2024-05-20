@@ -16,6 +16,7 @@ class WifiSearchActivity : BaseActivity<ActivityWifiSearchBinding>() {
     private lateinit var foundDevicesArrayAdapters: ArrayAdapter<String>
     private val foundDevices = ArrayList<DeviceInfo>()
 
+    private var timeMark: Long = 0
 
     override fun onViewClick(v: View?) {
         when (v?.id) {
@@ -24,6 +25,8 @@ class WifiSearchActivity : BaseActivity<ActivityWifiSearchBinding>() {
             }
 
             R.id.btn_search -> {
+                var timeMarkTemp = System.currentTimeMillis()
+                timeMark = timeMarkTemp
                 vb.pb.visibility = View.VISIBLE
                 foundDevices.clear()
                 foundDevicesArrayAdapters.clear()
@@ -44,7 +47,8 @@ class WifiSearchActivity : BaseActivity<ActivityWifiSearchBinding>() {
                     }
 
                     override fun onSearchEnd() {
-                        vb.pb.visibility = View.INVISIBLE
+                        if (timeMarkTemp == timeMark)
+                            vb.pb.visibility = View.INVISIBLE
                     }
 
                     override fun onSearchFail(msg: String?) {
