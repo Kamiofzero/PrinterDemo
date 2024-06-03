@@ -90,6 +90,7 @@ class WifiSearchActivity : BaseActivity<ActivityWifiSearchBinding>() {
     override fun onDestroy() {
         super.onDestroy()
         wifiUtil.stopSearchPrinter()
+        wifiUtil.destroy()
     }
 
 }

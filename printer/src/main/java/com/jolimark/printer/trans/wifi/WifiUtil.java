@@ -64,6 +64,11 @@ public class WifiUtil {
         context.unregisterReceiver(broadcastReceiver);
     }
 
+    public void destroy() {
+        executorService.shutdown();
+        executorService1.shutdown();
+    }
+
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {

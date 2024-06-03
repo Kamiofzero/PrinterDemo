@@ -70,7 +70,7 @@ public class UsbBase extends TransBase {
     private boolean checkAndRequestPermission(UsbManager usbManager, UsbDevice usbDevice) {
         if (!usbManager.hasPermission(usbDevice)) {
             LogUtil.i(TAG, "has no permission of this device，request permission.");
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), 0);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), PendingIntent.FLAG_IMMUTABLE);
             usbManager.requestPermission(usbDevice, pendingIntent);
             IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
             context.registerReceiver(mUsbReceiver, filter);

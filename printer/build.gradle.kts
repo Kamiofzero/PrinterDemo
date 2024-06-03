@@ -30,7 +30,17 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+   libraryVariants.all {
+        outputs.all {
+            if (this is com.android.build.gradle.internal.api.LibraryVariantOutputImpl) {
+                this.outputFileName = "JmPrinter_v1.0.aar"
+            }
+        }
+    }
 }
+
+
 
 dependencies {
 
