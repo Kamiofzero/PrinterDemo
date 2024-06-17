@@ -108,7 +108,7 @@ abstract class BaseActivity<T : ViewBinding> : AppCompatActivity(), OnClickListe
         progressText = vb.tv
 
         progressDialog = AlertDialog.Builder(context).apply {
-            setCancelable(true)
+            setCancelable(false)
             setView(contentView)
         }.create().apply {
             window?.setBackgroundDrawableResource(android.R.color.transparent)

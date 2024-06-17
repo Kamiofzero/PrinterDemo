@@ -67,10 +67,8 @@ public class BluetoothBase extends TransBase {
                 if (btSocket != null)
                     btSocket.close();
 
-            } catch (IOException e) {
+            } catch (Exception e) {
                 LogUtil.i(TAG, e.getMessage());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
 
             if (connectWithChannel()) {
@@ -90,7 +88,7 @@ public class BluetoothBase extends TransBase {
         try {
             out = new DataOutputStream(btSocket.getOutputStream());
             ins = new DataInputStream(btSocket.getInputStream());
-        } catch (IOException e) {
+        } catch (Exception e) {
             out = null;
             ins = null;
             LogUtil.i(TAG, e.getMessage());
@@ -148,17 +146,16 @@ public class BluetoothBase extends TransBase {
                 var6.printStackTrace();
             }
         }
-
         int tryCount = 2;
         boolean result;
         while (true) {
             try {
                 btSocket.connect();
                 result = true;
-            } catch (IOException e) {
+            } catch (Exception e) {
+                LogUtil.i(TAG, e.getMessage());
                 LogUtil.i(TAG, "connect failed , try count " + tryCount);
                 result = false;
-                LogUtil.i(TAG, e.getMessage());
                 if (--tryCount > 0)
                     continue;
             }
@@ -182,10 +179,7 @@ public class BluetoothBase extends TransBase {
         if (m != null) {
             try {
                 btSocket = (BluetoothSocket) m.invoke(btDev, 6);
-            } catch (IllegalAccessException e) {
-                btSocket = null;
-                LogUtil.i(TAG, e.getMessage());
-            } catch (InvocationTargetException e) {
+            } catch (Exception e) {
                 btSocket = null;
                 LogUtil.i(TAG, e.getMessage());
             }
@@ -201,7 +195,7 @@ public class BluetoothBase extends TransBase {
         try {
             btSocket.connect();
             result = true;
-        } catch (IOException e) {
+        } catch (Exception e) {
             result = false;
             LogUtil.i(TAG, e.getMessage());
         }
@@ -224,10 +218,10 @@ public class BluetoothBase extends TransBase {
         try {
             out.write(data);
             out.flush();
-        } catch (IOException e) {
+        } catch (Exception e) {
+            MsgCode.setLastErrorCode(MsgCode.ER_BT_SEND_FAIL);
             LogUtil.i(TAG, e.getMessage());
             LogUtil.i(TAG, "bt socket write fail");
-            MsgCode.setLastErrorCode(MsgCode.ER_BT_SEND_FAIL);
             return false;
         }
         LogUtil.i(TAG, "send " + data.length + " bytes.");
@@ -252,7 +246,7 @@ public class BluetoothBase extends TransBase {
             if (ins.available() > 0) {
                 len = ins.read(buffer);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             LogUtil.i(TAG, e.getMessage());
             LogUtil.i(TAG, "bt socket read fail.");
             MsgCode.setLastErrorCode(MsgCode.ER_BT_RECEIVE);
@@ -280,8 +274,8 @@ public class BluetoothBase extends TransBase {
             }
             isConnected = false;
             LogUtil.i(TAG, "bt socket close");
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            LogUtil.i(TAG, e.getMessage());
         }
     }
 

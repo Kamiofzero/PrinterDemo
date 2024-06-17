@@ -64,7 +64,7 @@ public class BluetoothReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
-        LogUtil.i(TAG, "onReceive: " + action);
+//        LogUtil.i(TAG, "onReceive: " + action);
         switch (action) {
 
             //蓝牙开关状态
@@ -92,7 +92,7 @@ public class BluetoothReceiver extends BroadcastReceiver {
             case BluetoothAdapter.ACTION_DISCOVERY_STARTED: {
                 if (!flag_bt_device_discovery)
                     return;
-                LogUtil.i(TAG, "discovery start.");
+                LogUtil.i(TAG, "discovery bluetooth devices start.");
                 if (btDeviceDiscoveryListener != null)
                     btDeviceDiscoveryListener.onDeviceStart();
                 break;
@@ -101,7 +101,7 @@ public class BluetoothReceiver extends BroadcastReceiver {
             case BluetoothAdapter.ACTION_DISCOVERY_FINISHED: {
                 if (!flag_bt_device_discovery)
                     return;
-                LogUtil.i(TAG, "discovery finish.");
+                LogUtil.i(TAG, "discovery bluetooth devices finish.");
                 if (btDeviceDiscoveryListener != null)
                     btDeviceDiscoveryListener.onDeviceFinish();
                 break;
@@ -112,26 +112,28 @@ public class BluetoothReceiver extends BroadcastReceiver {
                 if (!flag_bt_device_discovery)
                     return;
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                String type;
-                switch (device.getType()) {
-                    case BluetoothDevice.DEVICE_TYPE_CLASSIC: {
-                        type = "classic";
-                        break;
+                if (device != null) {
+                    String type;
+                    switch (device.getType()) {
+                        case BluetoothDevice.DEVICE_TYPE_CLASSIC: {
+                            type = "classic";
+                            break;
+                        }
+                        case BluetoothDevice.DEVICE_TYPE_LE: {
+                            type = "LE";
+                            break;
+                        }
+                        case BluetoothDevice.DEVICE_TYPE_DUAL: {
+                            type = "Dual";
+                            break;
+                        }
+                        default: {
+                            type = "unknown";
+                            break;
+                        }
                     }
-                    case BluetoothDevice.DEVICE_TYPE_LE: {
-                        type = "LE";
-                        break;
-                    }
-                    case BluetoothDevice.DEVICE_TYPE_DUAL: {
-                        type = "Dual";
-                        break;
-                    }
-                    default: {
-                        type = "unknown";
-                        break;
-                    }
+                    LogUtil.i(TAG, "bluetooth device found " + "[" + device.getName() + "," + device.getAddress() + "," + type + "]");
                 }
-                LogUtil.i(TAG, "bt device found " + "[" + device.getName() + "," + device.getAddress() + "," + type + "]");
                 if (btDeviceDiscoveryListener != null)
                     btDeviceDiscoveryListener.onDeviceFound(device);
                 break;
@@ -143,17 +145,18 @@ public class BluetoothReceiver extends BroadcastReceiver {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 int state = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, -1);
                 if (state == BluetoothDevice.BOND_BONDED) {
-                    LogUtil.i(TAG, " bt device bonded");
+                    if (device != null)
+                        LogUtil.i(TAG, " bluetooth device [" + device.getName() + " , " + device.getAddress() + "] bonded");
                     if (btDeviceBondListener != null)
                         btDeviceBondListener.onBTDeviceBonded(device);
 
                 } else if (state == BluetoothDevice.BOND_BONDING) {
-                    LogUtil.i(TAG, " bluetooth device bonding");
+                    LogUtil.i(TAG, " bluetooth device [" + device.getName() + " , " + device.getAddress() + "] bonding");
                     if (btDeviceBondListener != null)
                         btDeviceBondListener.onBTDeviceBonding(device);
 
                 } else if (state == BluetoothDevice.BOND_NONE) {
-                    LogUtil.i(TAG, " bluetooth device none bond");
+                    LogUtil.i(TAG, " bluetooth device [" + device.getName() + " , " + device.getAddress() + "] unbond");
                     if (btDeviceBondListener != null)
                         btDeviceBondListener.onBTDeviceBondNone(device);
                 }
@@ -164,9 +167,10 @@ public class BluetoothReceiver extends BroadcastReceiver {
                 if (!flag_bt_device_acl)
                     return;
 
-
                 if (bTDeviceAclListener != null) {
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    if (device != null)
+                        LogUtil.i(TAG, " bluetooth device [" + device.getName() + " , " + device.getAddress() + "] acl connected");
                     bTDeviceAclListener.onAclConnected(device);
                 }
 
@@ -180,6 +184,8 @@ public class BluetoothReceiver extends BroadcastReceiver {
 
                 if (bTDeviceAclListener != null) {
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    if (device != null)
+                        LogUtil.i(TAG, " bluetooth device [" + device.getName() + " , " + device.getAddress() + "] acl disconnected");
                     bTDeviceAclListener.onAclDisConnected(device);
                 }
                 break;
@@ -201,7 +207,6 @@ public class BluetoothReceiver extends BroadcastReceiver {
                 if (!flag_bt_device_pair_request)
                     return;
 
-                LogUtil.i(TAG, " bt device pair request");
                 if (btDevicePairListener != null)
                     btDevicePairListener.onDevicePair();
                 break;

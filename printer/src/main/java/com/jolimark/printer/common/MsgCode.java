@@ -224,6 +224,7 @@ public final class MsgCode {
                 msg = "打印机回复包CRC校验不通过";
                 break;
             }
+
             default: {
                 msg = "错误码：【" + errCode + "】";
                 break;

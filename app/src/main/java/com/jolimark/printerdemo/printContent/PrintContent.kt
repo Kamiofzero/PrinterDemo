@@ -3,6 +3,8 @@ package com.jolimark.printerdemo.printContent
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
+import com.jolimark.printer.util.ByteArrayUtil
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -12,7 +14,9 @@ import java.io.InputStream
 object PrintContent {
 
     fun getText(context: Context, name: String): String? {
-        return getAssetsData(context, "$name.txt").toString()
+        return getAssetsData(context, "$name.txt")?.let {
+           String(it)
+        }
     }
 
     fun getBitmap(context: Context, name: String): Bitmap? {
@@ -41,6 +45,8 @@ object PrintContent {
                 }
             }
         }
+        Log.i("tag", "${bytes?.size}")
+
         return bytes
     }
 

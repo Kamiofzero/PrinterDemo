@@ -43,12 +43,12 @@ public abstract class BasePrinter {
         return name;
     }
 
-    private ExecutorService executorService;
+    protected ExecutorService executorService;
     private Comm comm;
     private Comm2 comm2;
     private CommBase commBase;
 
-    private Handler mainHandler;
+    protected Handler mainHandler;
 
     private PrinterConfig config;
     private boolean antiLoss;
@@ -228,22 +228,6 @@ public abstract class BasePrinter {
         executorService.shutdown();
     }
 
-    /**
-     * 连接打印机
-     *
-     * @return
-     */
-    public boolean connect() {
-        return commBase.connect();
-    }
-
-    /**
-     * 关闭连接
-     */
-    public void disconnect() {
-        commBase.disconnect();
-    }
-
     public boolean print(byte[] bytes) {
         if (!commBase.connect()) return false;
         boolean ret = commBase.sendData(bytes);
@@ -266,6 +250,57 @@ public abstract class BasePrinter {
         commBase.disconnect();
         return ret;
     }
+
+
+    public void connect(Callback callback) {
+        executorService.execute(() -> {
+            if (!commBase.connect()) {
+                callback(callback, FAIL);
+                return;
+            }
+            callback(callback, SUCCESS);
+        });
+    }
+
+    public void printOnly(byte[] bytes, Callback callback) {
+        executorService.execute(() -> {
+            if (!commBase.sendData(bytes)) {
+                callback(callback, FAIL);
+            } else {
+                callback(callback, SUCCESS);
+            }
+        });
+    }
+
+    public void printTextOnly(String text, Callback callback) {
+        executorService.execute(() -> {
+            byte[] bytes = ByteArrayUtil.stringToByte(text);
+            if (!commBase.sendData(bytes)) {
+                callback(callback, FAIL);
+            } else {
+                callback(callback, SUCCESS);
+            }
+        });
+    }
+
+    public void printImgOnly(Bitmap bitmap, Callback callback) {
+        executorService.execute(() -> {
+            byte[] bytes = ImageTransformer.imageToData(bitmap);
+            if (!commBase.sendData(bytes)) {
+                callback(callback, FAIL);
+            } else {
+                callback(callback, SUCCESS);
+            }
+        });
+    }
+
+    /**
+     * 关闭连接
+     */
+    public void disconnect() {
+        commBase.disconnect();
+    }
+
 
     protected void callback(final Callback callback, int key) {
         if (callback == null)

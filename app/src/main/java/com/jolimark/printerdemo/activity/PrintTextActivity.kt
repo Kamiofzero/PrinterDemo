@@ -1,6 +1,7 @@
 package com.jolimark.printerdemo.activity
 
 import android.content.Context
+import android.util.Log
 import android.view.View
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
@@ -72,6 +73,9 @@ class PrintTextActivity : PrintBaseActivity<ActivityPrintTextBinding>() {
             add(TextItem(R.mipmap.text1, PrintContent.getText(context, "text1")!!))
             add(TextItem(R.mipmap.text2, PrintContent.getText(context, "text2")!!))
         }.also { mAdapter.setList(it) }
+
+        Log.i("tag",items[0].printData)
+        Log.i("tag",items[1].printData)
     }
 
 
