@@ -40,5 +40,12 @@
         android:id="@+id/btn_print"
         style="@style/MaterialButton2"
         android:layout_marginVertical="10dp"
-        android:text="@string/print" />
+        android:text="指掌销售出库单110mm(标签机)" />
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_print2"
+        style="@style/MaterialButton2"
+        android:layout_marginVertical="10dp"
+        android:text="TSPL_BOX指令(CLP-180标签)" />
 </LinearLayout>

@@ -1,13 +1,14 @@
 package com.jolimark.printer.printer;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 
+import com.jolimark.printer.callback.Callback;
 import com.jolimark.printer.callback.Callback2;
 import com.jolimark.printer.trans.TransBase;
 import com.jolimark.printer.trans.TransType;
 import com.jolimark.printer.trans.bluetooth.BluetoothBase;
-import com.jolimark.printer.trans.bluetooth.auto.AutoConnect;
-import com.jolimark.printer.trans.bluetooth.auto.AutoConnect2;
+import com.jolimark.printer.trans.bluetooth.auto.AutoConnect3;
 
 public class BluetoothPrinter extends BasePrinter {
     private BluetoothBase bluetoothBase;
@@ -59,34 +60,37 @@ public class BluetoothPrinter extends BasePrinter {
         return bluetoothBase.getMac();
     }
 
-    private AutoConnect autoConnect;
+    private AutoConnect3 autoConnect;
 
-    public void connectLong(Context context, Callback2<String> callback) {
+
+    public void connectL(Context context, Callback2<String> callback) {
         if (autoConnect == null) {
-            autoConnect = new AutoConnect(context, bluetoothBase, executorService, mainHandler, callback);
+            autoConnect = new AutoConnect3(context, bluetoothBase.getMac(), commBase, executorService, mainHandler, callback);
             autoConnect.autoConnect();
         }
     }
-    public void disconnectLong() {
+
+    public void disconnectL() {
         if (autoConnect != null) {
             autoConnect.destroy();
             autoConnect = null;
         }
-        bluetoothBase.disconnect();
     }
 
-    private AutoConnect2 autoConnect2;
-    public void connectLong2(Context context, Callback2<String> callback) {
-        if (autoConnect2 == null) {
-            autoConnect2 = new AutoConnect2(context, bluetoothBase, executorService, mainHandler, callback);
-            autoConnect2.autoConnect();
-        }
+
+    public void printTextL(String text, Callback callback) {
+        if (autoConnect != null) autoConnect.printText(text, callback);
+//        printText(text, callback);
     }
-    public void disconnectLong2() {
-        if (autoConnect2 != null) {
-            autoConnect2.destroy();
-            autoConnect2 = null;
-        }
+
+    public void printImgL(Bitmap bitmap, Callback callback) {
+        if (autoConnect != null) autoConnect.printImg(bitmap, callback);
+//        printImg(bitmap,callback);
+    }
+
+    public void printL(byte[] bytes, Callback callback) {
+        if (autoConnect != null) autoConnect.print(bytes, callback);
+//        printL(bytes,callback);
     }
 
 

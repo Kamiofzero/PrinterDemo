@@ -8,17 +8,14 @@ import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.os.Build;
 
 import com.jolimark.printer.common.MsgCode;
 import com.jolimark.printer.trans.TransBase;
-import com.jolimark.printer.trans.bluetooth.util.SystemUtils;
 import com.jolimark.printer.util.LogUtil;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.UUID;
 
@@ -44,43 +41,43 @@ public class BluetoothBase extends TransBase {
     @Override
     public boolean connect() {
         if (mac == null) {
-            LogUtil.i(TAG, "bt address not set");
+            LogUtil.i(TAG, "address not set");
             MsgCode.setLastErrorCode(MsgCode.ER_BT_ADDRESS_NULL);
             return false;
         }
-        if (btSocket != null) {
-            disconnect();
-        }
+//        if (btSocket != null) {
+//            disconnect();
+//        }
         btDev = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(mac);
-        LogUtil.i(TAG, "bt socket connecting to " + mac + " ...");
+        LogUtil.i(TAG, "connecting to " + mac + " ...");
         boolean flag_connect = false;
         if (connectRFCommSocket()) {
             flag_connect = true;
-            LogUtil.i(TAG, "connectRFCommSocket success");
+            LogUtil.i(TAG, "[" + mac + "] connectRFCommSocket success");
         }
+//        if (!flag_connect && !isRelease) {
+//            LogUtil.i(TAG, "[" + mac + "] connectRFCommSocket fail");
+//
+//            try {
+//                Thread.sleep(300);
+//
+//                if (btSocket != null)
+//                    btSocket.close();
+//
+//            } catch (Exception e) {
+//                LogUtil.i(TAG, e.getMessage());
+//            }
+//
+//            if (connectWithChannel()) {
+//                flag_connect = true;
+//                LogUtil.i(TAG, "[" + mac + "] connectWithChannel 6 success");
+//            } else
+//                LogUtil.i(TAG, "[" + mac + "] connectWithChannel 6 fail");
+//        }
+
+
         if (!flag_connect) {
-            LogUtil.i(TAG, "connectRFCommSocket fail");
-
-            try {
-                Thread.sleep(300);
-
-                if (btSocket != null)
-                    btSocket.close();
-
-            } catch (Exception e) {
-                LogUtil.i(TAG, e.getMessage());
-            }
-
-            if (connectWithChannel()) {
-                flag_connect = true;
-                LogUtil.i(TAG, "connectWithChannel 6 success");
-            } else
-                LogUtil.i(TAG, "connectWithChannel 6 fail");
-        }
-
-
-        if (!flag_connect) {
-            LogUtil.i(TAG, "bt socket connect fail");
+            LogUtil.i(TAG, "[" + mac + "] socket connect fail");
             MsgCode.setLastErrorCode(MsgCode.ER_BT_CONNECT_FAIL);
             return false;
         }
@@ -92,70 +89,69 @@ public class BluetoothBase extends TransBase {
             out = null;
             ins = null;
             LogUtil.i(TAG, e.getMessage());
-            LogUtil.i(TAG, "bt socket get IO stream fail");
+            LogUtil.i(TAG, "[" + mac + "] socket get IO stream fail");
             MsgCode.setLastErrorCode(MsgCode.ER_BT_CONNECT_FAIL);
             return false;
         }
         isConnected = true;
-        LogUtil.i(TAG, "bt socket connect success");
+        LogUtil.i(TAG, "[" + mac + "] socket connect success");
         return true;
     }
 
 
     private boolean connectRFCommSocket() {
-        LogUtil.i(TAG, "connectRFCommSocket");
+        LogUtil.i(TAG, "[" + mac + "] connectRFCommSocket");
         UUID uuid = UUID.fromString(SPP_UUID);
-        Class<? extends BluetoothDevice> cls = BluetoothDevice.class;
-        Method m = null;
-        if (Build.VERSION.SDK_INT >= 10 && !SystemUtils.isMediatekPlatform()) {
-            try {
-                m = cls.getMethod("createInsecureRfcommSocketToServiceRecord", UUID.class);
-            } catch (NoSuchMethodException var9) {
-                var9.printStackTrace();
-            }
-            if (m != null) {
-                try {
-                    btSocket = (BluetoothSocket) m.invoke(btDev, uuid);
-                } catch (IllegalAccessException e) {
-                    btSocket = null;
-                    LogUtil.i(TAG, e.getMessage());
-                } catch (InvocationTargetException e) {
-                    btSocket = null;
-                    LogUtil.i(TAG, e.getMessage());
-                }
-            }
-        } else {
-            try {
-                btSocket = btDev.createRfcommSocketToServiceRecord(uuid);
-            } catch (IOException e) {
-                btSocket = null;
-                LogUtil.i(TAG, e.getMessage());
-            }
+//        Class<? extends BluetoothDevice> cls = BluetoothDevice.class;
+//        Method m = null;
+//        if (Build.VERSION.SDK_INT >= 10 && !SystemUtils.isMediatekPlatform()) {
+//            try {
+//                m = cls.getMethod("createInsecureRfcommSocketToServiceRecord", UUID.class);
+//            } catch (NoSuchMethodException var9) {
+//                var9.printStackTrace();
+//            }
+//            if (m != null) {
+//                try {
+//                    btSocket = (BluetoothSocket) m.invoke(btDev, uuid);
+//                } catch (IllegalAccessException e) {
+//                    btSocket = null;
+//                    LogUtil.i(TAG, e.getMessage());
+//                } catch (InvocationTargetException e) {
+//                    btSocket = null;
+//                    LogUtil.i(TAG, e.getMessage());
+//                }
+//            }
+//        } else {
+        try {
+            btSocket = btDev.createRfcommSocketToServiceRecord(uuid);
+        } catch (IOException e) {
+            btSocket = null;
+            LogUtil.i(TAG, e.getMessage());
         }
+//        }
         if (btSocket == null) {
-            LogUtil.i(TAG, "bt socket create fail");
+            LogUtil.i(TAG, "[" + mac + "] socket create fail");
             MsgCode.setLastErrorCode(MsgCode.ER_BT_CONNECT_FAIL);
             return false;
         }
 
-        if (SystemUtils.isMediatekPlatform()) {
-            try {
-                LogUtil.i(TAG, "it is MTK platform");
-                Thread.sleep(3000);
-            } catch (InterruptedException var6) {
-                var6.printStackTrace();
-            }
-        }
+//        if (SystemUtils.isMediatekPlatform()) {
+//            try {
+//                LogUtil.i(TAG, "it is MTK platform");
+//                Thread.sleep(3000);
+//            } catch (InterruptedException var6) {
+//                var6.printStackTrace();
+//            }
+//        }
         int tryCount = 2;
-        boolean result;
-        while (true) {
+        boolean result = false;
+        while (true && !isRelease) {
             try {
                 btSocket.connect();
                 result = true;
             } catch (Exception e) {
                 LogUtil.i(TAG, e.getMessage());
-                LogUtil.i(TAG, "connect failed , try count " + tryCount);
-                result = false;
+                LogUtil.i(TAG, "[" + mac + "] connect failed , try count " + tryCount);
                 if (--tryCount > 0)
                     continue;
             }
@@ -165,7 +161,7 @@ public class BluetoothBase extends TransBase {
     }
 
     private boolean connectWithChannel() {
-        LogUtil.i(TAG, "connectWithChannel");
+        LogUtil.i(TAG, "[" + mac + "] connectWithChannel");
         Class<? extends BluetoothDevice> cls = BluetoothDevice.class;
         Method m = null;
 
@@ -173,7 +169,6 @@ public class BluetoothBase extends TransBase {
             m = cls.getMethod("createRfcommSocket", Integer.TYPE);
         } catch (NoSuchMethodException e) {
             LogUtil.i(TAG, e.getMessage());
-            LogUtil.i(TAG, "bt socket create fail");
         }
 
         if (m != null) {
@@ -186,7 +181,7 @@ public class BluetoothBase extends TransBase {
         }
 
         if (btSocket == null) {
-            LogUtil.i(TAG, "bt socket create fail");
+            LogUtil.i(TAG, "[" + mac + "] bt socket create fail");
             MsgCode.setLastErrorCode(MsgCode.ER_BT_CONNECT_FAIL);
             return false;
         }
@@ -221,10 +216,10 @@ public class BluetoothBase extends TransBase {
         } catch (Exception e) {
             MsgCode.setLastErrorCode(MsgCode.ER_BT_SEND_FAIL);
             LogUtil.i(TAG, e.getMessage());
-            LogUtil.i(TAG, "bt socket write fail");
+            LogUtil.i(TAG, "[" + mac + "] socket write fail");
             return false;
         }
-        LogUtil.i(TAG, "send " + data.length + " bytes.");
+        LogUtil.i(TAG, "[" + mac + "] send " + data.length + " bytes.");
         return true;
     }
 
@@ -243,16 +238,16 @@ public class BluetoothBase extends TransBase {
         }
         int len = 0;
         try {
-            if (ins.available() > 0) {
-                len = ins.read(buffer);
-            }
+//            if (ins.available() > 0) {
+            len = ins.read(buffer);
+//            }
         } catch (Exception e) {
             LogUtil.i(TAG, e.getMessage());
-            LogUtil.i(TAG, "bt socket read fail.");
+            LogUtil.i(TAG, "[" + mac + "]  socket read fail.");
             MsgCode.setLastErrorCode(MsgCode.ER_BT_RECEIVE);
             return -1;
         }
-        LogUtil.i(TAG, "receive data " + len + " bytes.");
+        LogUtil.i(TAG, "[" + mac + "] receive data " + len + " bytes.");
         return len;
     }
 
@@ -273,14 +268,29 @@ public class BluetoothBase extends TransBase {
                 btSocket = null;
             }
             isConnected = false;
-            LogUtil.i(TAG, "bt socket close");
+            LogUtil.i(TAG, "[" + mac + "] socket close");
         } catch (Exception e) {
             LogUtil.i(TAG, e.getMessage());
         }
     }
 
+    private boolean isRelease;
+
+    @Override
+    public void release() {
+        isRelease = true;
+        disconnect();
+    }
+
 
     public String getMac() {
         return mac;
+    }
+
+    @Override
+    public boolean isConnected() {
+        boolean ret = btSocket.isConnected();
+        LogUtil.i(TAG, "isConnected: " + ret);
+        return ret;
     }
 }

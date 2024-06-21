@@ -48,6 +48,7 @@ public class BluetoothReceiver extends BroadcastReceiver {
     public void setBtDeviceDiscoveryListener(BTDeviceDiscoveryListener btDeviceDiscoveryListener) {
         this.btDeviceDiscoveryListener = btDeviceDiscoveryListener;
         flag_bt_device_discovery = btDeviceDiscoveryListener == null ? false : true;
+        LogUtil.i(TAG, "flag_bt_device_discovery: " + flag_bt_device_discovery);
     }
 
     public void setBtDevicePairListener(BTDevicePairListener btDevicePairListener) {

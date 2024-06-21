@@ -9,12 +9,14 @@ import java.io.IOException
 import java.io.InputStream
 
 class PrintPrnActivity : PrintBaseActivity<ActivityPrintPrnBinding>() {
+
+    private var prn: String? = null
     override fun onPrinterSelect(printer: BasePrinter) {
         showProgress(getString(R.string.tip_printing))
         var `is`: InputStream? = null
         var bytes: ByteArray? = null
         try {
-            `is` = assets.open("110.prn")
+            `is` = assets.open(prn!!)
             bytes = ByteArray(`is`.available())
             `is`.read(bytes)
         } catch (e: IOException) {
@@ -47,6 +49,12 @@ class PrintPrnActivity : PrintBaseActivity<ActivityPrintPrnBinding>() {
             }
 
             R.id.btn_print -> {
+                prn = "110.prn"
+                selectPrinter()
+            }
+
+            R.id.btn_print2 -> {
+                prn = "TSPL.prn"
                 selectPrinter()
             }
         }

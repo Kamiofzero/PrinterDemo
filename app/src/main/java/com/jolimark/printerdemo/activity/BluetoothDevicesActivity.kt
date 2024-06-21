@@ -14,11 +14,8 @@ import com.jolimark.printerdemo.R
 import com.jolimark.printerdemo.databinding.ActivityBluetoothDevicesBinding
 import com.jolimark.printerdemo.db.PrinterBean
 import com.jolimark.printerdemo.db.PrinterTableDao
+import com.jolimark.printerdemo.util.DialogUtil
 import com.jolimark.printerdemo.util.PermissionUtil
-import com.jolimark.printerdemo.util.PermissionUtil.PERMISSION_ACCESS_COARSE_LOCATION
-import com.jolimark.printerdemo.util.PermissionUtil.PERMISSION_ACCESS_FINE_LOCATION
-import com.jolimark.printerdemo.util.PermissionUtil.PERMISSION_BLUETOOTH_CONNECT
-import com.jolimark.printerdemo.util.PermissionUtil.PERMISSION_BLUETOOTH_SCAN
 import kotlin.concurrent.thread
 
 @SuppressLint("MissingPermission")
@@ -42,39 +39,40 @@ class BluetoothDevicesActivity : BaseActivity<ActivityBluetoothDevicesBinding>()
             }
 
             R.id.btn_enable -> {
-                bluetoothUtil.enableBluetooth()
+                if (PermissionUtil.checkPermissions(
+                        context,
+                        arrayOf(PERMISSION_BLUETOOTH, PERMISSION_BLUETOOTH_CONNECT)
+                    )
+                )
+                    bluetoothUtil.enableBluetooth()
+                else
+                    DialogUtil.showDialog(context, getString(R.string.tip_bt_p_connect))
             }
 
             R.id.btn_search -> {
-                newDevices.clear()
-                newDevicesArrayAdapters.clear()
-                bluetoothUtil.apply {
-                    stopDiscoveryBTDevice()
-                    startDiscoveryBTDevice()
-                }
+                if (PermissionUtil.checkPermissions(
+                        context,
+                        arrayOf(
+                            PERMISSION_BLUETOOTH_SCAN,
+                            PERMISSION_ACCESS_FINE_LOCATION, PERMISSION_ACCESS_COARSE_LOCATION
+                        )
+                    )
+                ) {
+                    newDevices.clear()
+                    newDevicesArrayAdapters.clear()
+                    bluetoothUtil.apply {
+                        stopDiscoveryBTDevice()
+                        startDiscoveryBTDevice()
+                    }
+                } else
+                    DialogUtil.showDialog(context, getString(R.string.tip_bt_p_scan))
             }
         }
     }
 
     private lateinit var bluetoothUtil: BluetoothUtil
 
-    @SuppressLint("MissingPermission")
     override fun initView() {
-        PermissionUtil.checkAndRequestPermissions(
-            context, arrayOf(
-                PERMISSION_BLUETOOTH_CONNECT, PERMISSION_BLUETOOTH_SCAN,
-                PERMISSION_ACCESS_FINE_LOCATION, PERMISSION_ACCESS_COARSE_LOCATION
-            ), 1
-        )
-
-        bluetoothUtil = BluetoothUtil()
-        if (bluetoothUtil.isBluetoothEnabled) {
-            vb.llBt.visibility = View.VISIBLE
-            vb.btnEnable.visibility = View.GONE
-        } else {
-            vb.llBt.visibility = View.GONE
-            vb.btnEnable.visibility = View.VISIBLE
-        }
 
         pairDevicesArrayAdapters = ArrayAdapter<String>(this, R.layout.item_bt)
         vb.pairDevices.adapter = pairDevicesArrayAdapters
@@ -104,20 +102,49 @@ class BluetoothDevicesActivity : BaseActivity<ActivityBluetoothDevicesBinding>()
         vb.pb.visibility = View.INVISIBLE
     }
 
-    @SuppressLint("MissingPermission")
     override fun initData() {
+        bluetoothUtil = BluetoothUtil()
+
+        if (bluetoothUtil.isBluetoothEnabled) {
+            vb.llBt.visibility = View.VISIBLE
+            vb.btnEnable.visibility = View.GONE
+        } else {
+            vb.llBt.visibility = View.GONE
+            vb.btnEnable.visibility = View.VISIBLE
+        }
+
+        PermissionUtil.checkAndRequestPermissions(
+            context, arrayOf(
+                PERMISSION_BLUETOOTH,
+                PERMISSION_BLUETOOTH_CONNECT, PERMISSION_BLUETOOTH_SCAN,
+                PERMISSION_ACCESS_FINE_LOCATION, PERMISSION_ACCESS_COARSE_LOCATION
+            ), 1
+        ).let {
+            if (it) {
+                updateBondDevices()
+            }
+        }
+
         bluetoothUtil.apply {
             registerBluetoothReceiver(context)
             setBluetoothStateListener(this@BluetoothDevicesActivity)
             setBTDeviceDiscoveryListener(this@BluetoothDevicesActivity)
             setBTDeviceBondListener(this@BluetoothDevicesActivity)
         }
-        updateBondDevices()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        bluetoothUtil.stopDiscoveryBTDevice()
+        if (PermissionUtil.checkPermissions(
+                context,
+                arrayOf(
+                    PERMISSION_BLUETOOTH_SCAN,
+                    PERMISSION_ACCESS_FINE_LOCATION, PERMISSION_ACCESS_COARSE_LOCATION
+                )
+            )
+        ) {
+            bluetoothUtil.stopDiscoveryBTDevice()
+        }
         bluetoothUtil.unregisterBluetoothReceiver(context)
     }
 
@@ -217,6 +244,21 @@ class BluetoothDevicesActivity : BaseActivity<ActivityBluetoothDevicesBinding>()
                     grantPermissions: Array<String>,
                     deniedPermissions: Array<String>
                 ) {
+
+                    grantPermissions.find { it == PERMISSION_BLUETOOTH_CONNECT }
+                        ?.also { updateBondDevices() }
+
+                    deniedPermissions.filter { it == PERMISSION_BLUETOOTH_CONNECT || it == PERMISSION_BLUETOOTH }
+                        ?.also {
+                            if (it.isNotEmpty())
+                                DialogUtil.showDialog(context, getString(R.string.tip_bt_p_connect))
+                        }
+
+                    deniedPermissions.filter(fun(s: String): Boolean { return s == PERMISSION_BLUETOOTH_SCAN || s == PERMISSION_ACCESS_FINE_LOCATION || s == PERMISSION_ACCESS_COARSE_LOCATION })
+                        ?.also {
+                            if (it.isNotEmpty())
+                                DialogUtil.showDialog(context, getString(R.string.tip_bt_p_scan))
+                        }
 
                 }
             })

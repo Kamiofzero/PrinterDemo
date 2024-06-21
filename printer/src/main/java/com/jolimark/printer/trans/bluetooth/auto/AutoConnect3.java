@@ -2,6 +2,7 @@ package com.jolimark.printer.trans.bluetooth.auto;
 
 import static java.lang.Thread.sleep;
 
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
@@ -10,6 +11,9 @@ import com.jolimark.printer.callback.Callback;
 import com.jolimark.printer.callback.Callback2;
 import com.jolimark.printer.common.MsgCode;
 import com.jolimark.printer.protocol.CommBase;
+import com.jolimark.printer.trans.bluetooth.BluetoothUtil;
+import com.jolimark.printer.trans.bluetooth.listener.BTDeviceAclListener;
+import com.jolimark.printer.trans.bluetooth.listener.BluetoothStateListener;
 import com.jolimark.printer.util.ByteArrayUtil;
 import com.jolimark.printer.util.ImageTransformer;
 import com.jolimark.printer.util.LogUtil;
@@ -17,8 +21,8 @@ import com.jolimark.printer.util.LogUtil;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class AutoConnect2 {
-    private final String TAG = "AutoConnect2";
+public class AutoConnect3 {
+    private final String TAG = "AutoConnect3";
 
     private Context context;
 
@@ -30,17 +34,20 @@ public class AutoConnect2 {
     private Handler handler;
     private AutoCore core;
     private String info;
+    private BluetoothUtil util;
 
-    public AutoConnect2(Context context, String info, CommBase base, ExecutorService service, Handler handler, Callback2 callback) {
+    public AutoConnect3(Context context, String info, CommBase base, ExecutorService service, Handler handler, Callback2 callback) {
         this.context = context;
         this.info = info;
         this.base = base;
         this.service = service;
         this.handler = handler;
         this.callback = callback;
+        util = new BluetoothUtil();
     }
 
     public void destroy() {
+        util.unregisterBluetoothReceiver(context);
         core.stop();
         service.shutdown();
     }
@@ -49,7 +56,44 @@ public class AutoConnect2 {
     public void autoConnect() {
         core = new AutoCore();
         service.execute(core);
+        util.registerBluetoothReceiver(context);
+        util.setBTDeviceAclListener(btDeviceAclListener);
+        util.setBluetoothStateListener(bluetoothStateListener);
+        if (util.isBluetoothEnabled())
+            core.signalBtEnable();
     }
+
+    private BluetoothStateListener bluetoothStateListener = new BluetoothStateListener() {
+        @Override
+        public void onBluetoothEnabled() {
+            core.signalBtEnable();
+        }
+
+        @Override
+        public void onBluetoothDisabled() {
+            core.signalBtDisable();
+        }
+    };
+
+
+    private BTDeviceAclListener btDeviceAclListener = new BTDeviceAclListener() {
+        @Override
+        public void onAclConnected(BluetoothDevice device) {
+
+        }
+
+        @Override
+        public void onAclConnectRequest(BluetoothDevice device) {
+
+        }
+
+        @Override
+        public void onAclDisConnected(BluetoothDevice device) {
+            if (device.getAddress().equals(info)) {
+                core.signalDisconnect();
+            }
+        }
+    };
 
 
     public void print(byte[] bytes, Callback callback) {
@@ -87,6 +131,9 @@ public class AutoConnect2 {
         private Object lock;
         private boolean loop;
         private boolean isConnect;
+        private boolean isEnable;
+
+        private boolean isWait;
 
         public AutoCore() {
             lock = this;
@@ -98,14 +145,14 @@ public class AutoConnect2 {
         public void enqueuePrintTask(PrintTask task) {
 
             synchronized (lock) {
-                if (!isConnect) {
+                if (!isEnable || !isConnect) {
                     Callback cb = task.callback;
                     int code = MsgCode.ER_PRINTER_NOT_CONNECT;
                     MsgCode.setLastErrorCode(code);
                     String msg = MsgCode.getLastErrorMsg();
                     MsgCode.clear();
                     if (cb != null) {
-                        cb.onFail(code, msg);
+                        handler.post(() -> cb.onFail(code, msg));
                     }
                     return;
                 }
@@ -114,38 +161,86 @@ public class AutoConnect2 {
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                lock.notify();
+                if (isWait)
+                    lock.notify();
             }
         }
+
+        public void signalDisconnect() {
+            synchronized (lock) {
+                if (isEnable) {
+                    isConnect = false;
+                    LogUtil.i(TAG, "device [" + info + "] disconnected");
+                    if (isWait)
+                        lock.notify();
+                    if (loop)
+                        handler.post(() -> callback.onDisconnect(info));
+                }
+            }
+        }
+
+        public void signalBtEnable() {
+            LogUtil.i(TAG, "device [" + info + "] enabled");
+            synchronized (lock) {
+                isEnable = true;
+                if (isWait)
+                    lock.notify();
+            }
+        }
+
+        public void signalBtDisable() {
+            isConnect = false;
+            synchronized (lock) {
+                isEnable = false;
+                LogUtil.i(TAG, "device [" + info + "] disabled");
+//                if (isWait)
+//                    lock.notify();
+                if (loop)
+                    handler.post(() -> callback.onDisconnect(info));
+            }
+        }
+
 
         @Override
         public void run() {
             LogUtil.i(TAG, "core [" + info + "] run");
             while (loop) {
-                if (!isConnect)
-                    doConnectJob();
-                else {
-                    PrintTask task;
-                    synchronized (lock) {
-                        task = printTasks.poll();
-                    }
-                    if (task == null) {
-                        doHeartBeatJob();
-                        synchronized (lock) {
-                            task = printTasks.poll();
-                            if (task == null)
-                                try {
-                                    wait(2000);
-                                } catch (InterruptedException e) {
-                                    LogUtil.i(TAG, e.getMessage());
-                                }
-                        }
+                synchronized (lock) {
+                    if (!isEnable) {
+                        waitFor();
                         continue;
                     }
-                    doPrintJob(task);
                 }
+
+                if (!isConnect) {
+                    doConnectJob();
+                    continue;
+                }
+
+                PrintTask task;
+                synchronized (lock) {
+                    task = printTasks.poll();
+                    if (task == null) {
+                        waitFor();
+                        continue;
+                    }
+                }
+                LogUtil.i(TAG, "core [" + info + "] receive job");
+                doPrintJob(task);
             }
             LogUtil.i(TAG, "core [" + info + "] stop");
+        }
+
+        private void waitFor() {
+            try {
+                LogUtil.i(TAG, "core [" + info + "] wait");
+                isWait = true;
+                wait();
+            } catch (InterruptedException e) {
+                LogUtil.i(TAG, e.getMessage());
+            }
+            isWait = false;
+            LogUtil.i(TAG, "core [" + info + "] wait up");
         }
 
         private void doPrintJob(PrintTask task) {
@@ -162,7 +257,10 @@ public class AutoConnect2 {
                             final int code = MsgCode.getLastErrorCode();
                             final String msg = MsgCode.getLastErrorMsg();
                             MsgCode.clear();
-                            handler.post(() -> cb.onFail(code, msg));
+                            handler.post(() -> {
+                                cb.onFail(code, msg);
+                                callback.onDisconnect(info);
+                            });
                         }
                 }
 
@@ -191,24 +289,12 @@ public class AutoConnect2 {
             }
         }
 
-        private void doHeartBeatJob() {
-            LogUtil.i(TAG, "device [" + info + "] heartbeat test");
-//            byte[] heartBit = new byte[]{0x01};
-//            boolean ret = base.sendData(heartBit);
-            boolean ret =   base.isConnected();
-//            boolean ret = (base.receiveData(new byte[1], 100) != -1);
-            if (!ret) {
-                LogUtil.i(TAG, "device [" + info + "] heartbeat test fail, disconnected");
-                handler.post(() -> callback.onDisconnect(info));
-                isConnect = false;
-            }
-        }
-
         public void stop() {
+            base.release();
             synchronized (lock) {
                 loop = false;
+                lock.notify();
             }
-            base.release();
         }
     }
 

@@ -273,6 +273,11 @@ public class UsbBase extends TransBase {
         }
     }
 
+    @Override
+    public void release() {
+
+    }
+
 
     /**
      * 获取打印机状态码

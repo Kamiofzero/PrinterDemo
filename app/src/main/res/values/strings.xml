@@ -98,5 +98,7 @@
     <string name="bleDevices">Ble设备</string>
     <string name="ble">Ble</string>
     <string name="mtu">MTU大小</string>
+    <string name="tip_bt_p_connect">蓝牙授权被禁止,无法启动蓝牙</string>
+    <string name="tip_bt_p_scan">定位权限被禁止，无法搜索设备</string>
 
 </resources>

@@ -46,7 +46,7 @@ public abstract class BasePrinter {
     protected ExecutorService executorService;
     private Comm comm;
     private Comm2 comm2;
-    private CommBase commBase;
+    protected CommBase commBase;
 
     protected Handler mainHandler;
 

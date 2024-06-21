@@ -5,7 +5,6 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.IntentFilter;
 
-
 import com.jolimark.printer.trans.ble.listener.BleDeviceDiscoveryListener;
 import com.jolimark.printer.trans.ble.listener.BluetoothStateListener;
 import com.jolimark.printer.trans.ble.receiver.BluetoothReceiver;

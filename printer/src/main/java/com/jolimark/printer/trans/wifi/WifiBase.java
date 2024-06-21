@@ -184,6 +184,11 @@ public class WifiBase extends TransBase {
         }
     }
 
+    @Override
+    public void release() {
+
+    }
+
 
     public String getIp() {
         return ip;

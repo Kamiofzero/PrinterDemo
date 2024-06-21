@@ -146,8 +146,14 @@ public class Comm extends CommBase {
         return rtnValue;
     }
 
+    @Override
     public void disconnect() {
         transBase.disconnect();
+    }
+
+    @Override
+    public void release() {
+        transBase.release();
     }
 
     @Override
@@ -165,6 +171,11 @@ public class Comm extends CommBase {
             }
         }
         return true;
+    }
+
+    @Override
+    public int receiveData(byte[] buff, int timeout) {
+        return transBase.receiveData(buff, 100);
     }
 
 }

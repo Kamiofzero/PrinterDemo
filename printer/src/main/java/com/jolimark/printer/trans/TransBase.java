@@ -14,4 +14,6 @@ public abstract class TransBase {
     public boolean isConnected() {
         return isConnected;
     }
+
+    public abstract void release() ;
 }

@@ -59,6 +59,7 @@ public class BluetoothUtil {
      */
     public void unregisterBluetoothReceiver(Context context) {
         context.unregisterReceiver(bluetoothReceiver);
+        LogUtil.i(TAG, "unregisterBluetoothReceiver");
         synchronized (BluetoothUtil.class) {
             bluetoothReceiver = null;
         }
@@ -100,6 +101,7 @@ public class BluetoothUtil {
      * 停止搜索蓝牙设备
      */
     public void stopDiscoveryBTDevice() {
+        LogUtil.i(TAG,"stopDiscoveryBTDevice");
         if (bluetoothAdapter.isDiscovering())
             bluetoothAdapter.cancelDiscovery();
     }

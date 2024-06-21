@@ -167,7 +167,11 @@ abstract class BaseActivity<T : ViewBinding> : AppCompatActivity(), OnClickListe
 
 
     fun showPopupWindow(dependence: View, contextView: View, width: Int, height: Int): PopupWindow {
-        return PopupWindow(contextView,LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT).apply {
+        return PopupWindow(
+            contextView,
+            LayoutParams.WRAP_CONTENT,
+            LayoutParams.WRAP_CONTENT
+        ).apply {
             isOutsideTouchable = true
             isFocusable = true
             setBackgroundDrawable(ColorDrawable(Color.WHITE));
@@ -187,6 +191,7 @@ abstract class BaseActivity<T : ViewBinding> : AppCompatActivity(), OnClickListe
     protected val PERMISSION_ACCESS_COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION
     protected val PERMISSION_BLUETOOTH_CONNECT = Manifest.permission.BLUETOOTH_CONNECT
     protected val PERMISSION_BLUETOOTH_SCAN = Manifest.permission.BLUETOOTH_SCAN
+    protected val PERMISSION_BLUETOOTH = Manifest.permission.BLUETOOTH
 
 
     override fun onRequestPermissionsResult(

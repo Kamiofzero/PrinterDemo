@@ -47,16 +47,18 @@ public class AutoConnect {
     }
 
     public void destroy() {
-        base.disconnect();
+        LogUtil.i(TAG, "disconnect device [" + base.getMac() + "]");
+        isDestroy = true;
+        base.release();
         synchronized (AutoConnect.this) {
-            isDestroy = true;
             util.unregisterBluetoothReceiver(context);
+            util.stopDiscoveryBTDevice();
             if (task != null) task.cancel();
             timer.cancel();
-            base = null;
             service = null;
             handler = null;
             callback = null;
+            base = null;
         }
     }
 
@@ -65,6 +67,7 @@ public class AutoConnect {
         public void onBluetoothEnabled() {
             if (!isDestroy) {
                 if (connectState == -1) {
+                    util.setBTDeviceDiscoveryListener(btDeviceDiscoveryListener);
                     util.startDiscoveryBTDevice();
                 }
             }
@@ -90,6 +93,7 @@ public class AutoConnect {
             if (!isDestroy) {
                 if (base.getMac().equals(device.getAddress())) {
                     connectState = 0;
+                    if (task != null) task.cancel();
                     util.stopDiscoveryBTDevice();
                     util.setBTDeviceDiscoveryListener(null);
                     callback.onConnecting(device.getAddress());
@@ -102,7 +106,9 @@ public class AutoConnect {
         @Override
         public void onDeviceFinish() {
             if (!isDestroy) {
+                LogUtil.i(TAG, "connectState: " + connectState + ", bt enable: " + util.isBluetoothEnabled());
                 if (connectState == -1 && util.isBluetoothEnabled()) {
+                    LogUtil.i(TAG, "device not connect, schedule discovery");
                     scheduleDiscovery();
                 }
             }
@@ -123,9 +129,14 @@ public class AutoConnect {
         @Override
         public void onAclDisConnected(BluetoothDevice device) {
             if (!isDestroy) {
-                connectState = -1;
-                scheduleDiscovery();
-                callback.onDisconnect(device.getAddress());
+                if (connectState == 1 && device.getAddress().equals(base.getMac())) {
+                    connectState = -1;
+                    if (util.isBluetoothEnabled()) {
+                        LogUtil.i(TAG, "device disconnect, schedule discovery");
+                        scheduleDiscovery();
+                    }
+                    callback.onDisconnect(device.getAddress());
+                }
             }
         }
     };
@@ -133,7 +144,6 @@ public class AutoConnect {
     public void autoConnect() {
         util.registerBluetoothReceiver(context);
         util.setBluetoothStateListener(bluetoothStateListener);
-        util.setBTDeviceDiscoveryListener(btDeviceDiscoveryListener);
         util.setBTDeviceAclListener(btDeviceAclListener);
 //        util.startDiscoveryBTDevice();
         synchronized (AutoConnect.this) {
@@ -145,21 +155,24 @@ public class AutoConnect {
     }
 
     private void connect() {
+        BluetoothBase tBase = base;
         service.execute(() -> {
             synchronized (AutoConnect.this) {
                 if (!isDestroy) {
-                    if (!base.connect()) {
+                    boolean ret = tBase.connect();
+                    if (!ret) {
                         connectState = -1;
+                        LogUtil.i(TAG, "device connect fail, schedule discovery");
                         scheduleDiscovery();
                         handler.post(() -> {
                             if (!isDestroy)
-                                callback.onConnectFail(base.getMac());
+                                callback.onConnectFail(tBase.getMac());
                         });
                     } else {
                         connectState = 1;
                         handler.post(() -> {
                             if (!isDestroy)
-                                callback.onConnected(base.getMac());
+                                callback.onConnected(tBase.getMac());
                         });
                     }
                 }
@@ -177,8 +190,12 @@ public class AutoConnect {
 
         @Override
         public void run() {
-            util.setBTDeviceDiscoveryListener(btDeviceDiscoveryListener);
-            util.startDiscoveryBTDevice();
+            synchronized (AutoConnect.this) {
+                if (!isDestroy) {
+                    util.setBTDeviceDiscoveryListener(btDeviceDiscoveryListener);
+                    util.startDiscoveryBTDevice();
+                }
+            }
         }
     }
 }

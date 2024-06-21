@@ -492,4 +492,9 @@ public class BleBase extends TransBase {
             LogUtil.i(TAG, "bluetoothGatt disconnect");
         }
     }
+
+    @Override
+    public void release() {
+
+    }
 }

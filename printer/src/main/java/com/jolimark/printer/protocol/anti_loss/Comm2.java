@@ -51,6 +51,11 @@ public class Comm2 extends CommBase {
     }
 
     @Override
+    public void release() {
+        transBase.release();
+    }
+
+    @Override
     public boolean sendData_(List<byte[]> bytesList) {
         LogUtil.i(TAG, "PRINT");
         task = new Task();
@@ -267,7 +272,8 @@ public class Comm2 extends CommBase {
     }
 
 
-    public int receiveData(byte[] buff, int i) {
+    @Override
+    public int receiveData(byte[] buff, int timeout) {
         return 0;
     }
 

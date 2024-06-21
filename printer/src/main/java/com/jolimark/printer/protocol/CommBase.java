@@ -24,7 +24,11 @@ public abstract class CommBase {
 
     public abstract void disconnect();
 
+    public abstract void release();
+
     public abstract boolean sendData_(List<byte[]> bytesList);
+
+    public abstract int receiveData(byte[] buff, int timeout);
 
 
     public boolean sendData(byte[] bytes) {
